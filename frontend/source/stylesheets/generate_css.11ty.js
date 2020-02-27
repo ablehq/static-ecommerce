@@ -19,13 +19,13 @@ module.exports = class {
     return await postcss([
       require("postcss-import"),
       require("tailwindcss")("./tailwind.config.js"),
+      require("postcss-nested"),
       purgecss({
         content: [
           "./source/**/*.html",
           "./source/**/*.njk",
           "./source/**/*.md",
-          "./source/**/*.liquid",
-          "./svelte/**/*.svelte"
+          "./source/**/*.liquid"
         ],
         whitelist: [
           "h1",

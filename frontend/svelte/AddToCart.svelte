@@ -20,9 +20,7 @@
   data-id="product checked"
   on:click={addToCart}
   on:click={showCart}
-  class="bg-black w-8 h-8 max-w-8 max-h-8 text-white self-center uppercase
-  font-bold text-sm p-2 inline-block text-center hover:bg-blue-400
-  transition-colors duration-300 rounded-md">
+  class="add-to-cart">
   {#if $isCartRestored == true}
     <svg
       width="15"

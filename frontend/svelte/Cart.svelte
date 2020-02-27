@@ -39,14 +39,7 @@
 
 <div class="flex w-full mt-4 px-4 ">
   <div class="flex-auto" />
-  <a
-    href="#"
-    on:click={hideCart}
-    class="uppercase font-bold text-sm rounded-full border border-solid
-    border-black hover:bg-black hover:text-white transition-all duration-200
-    px-4 py-1 mt-2">
-    Close
-  </a>
+  <a href="#" on:click={hideCart} class="hide-cart">Close</a>
 </div>
 
 <div class="flex">
