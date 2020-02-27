@@ -1,0 +1,30 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Arpan CJ <arpan@able.do>",
+  "license": "MIT",
+  "dependencies": {
+    "@11ty/eleventy": "^0.10.0",
+    "@fullhuman/postcss-purgecss": "^2.0.5",
+    "@rollup/plugin-commonjs": "^11.0.2",
+    "@rollup/plugin-node-resolve": "^7.1.1",
+    "cheerio": "^1.0.0-rc.3",
+    "cssnano": "^4.1.10",
+    "md5": "^2.2.1",
+    "node-fetch": "^2.6.0",
+    "postcss": "^7.0.26",
+    "postcss-import": "^12.0.1",
+    "precss": "^4.0.0",
+    "rollup": "^1.31.1",
+    "rollup-plugin-svelte": "^5.1.1",
+    "rollup-plugin-terser": "^5.2.0",
+    "svelte": "^3.19.1",
+    "tailwindcss": "^1.1.4"
+  },
+  "scripts": {
+    "serve": "eleventy --serve",
+    "build": " eleventy; ./bin/assetHashing.js && rollup -c ",
+    "rollup": "rollup -c -w"
+  }
+}
