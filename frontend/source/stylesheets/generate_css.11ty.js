@@ -24,7 +24,8 @@ module.exports = class {
           "./source/**/*.html",
           "./source/**/*.njk",
           "./source/**/*.md",
-          "./source/**/*.liquid"
+          "./source/**/*.liquid",
+          "./svelte/**/*.svelte"
         ],
         whitelist: [
           "h1",
