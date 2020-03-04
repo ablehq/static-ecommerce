@@ -39,11 +39,7 @@
   onMount(async () => {});
 </script>
 
-<style>
-
-</style>
-
-<div class="flex flex-auto">
+<div class="flex flex-auto" data-line-item-id={product.id}>
   <div class="w-16 h-12 mr-2 overflow-hidden rounded-4">
     <img src={product.image} alt="" class="w-full" />
   </div>

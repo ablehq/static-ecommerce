@@ -10,6 +10,7 @@
     "axios": "^0.19.2",
     "cheerio": "^1.0.0-rc.3",
     "cssnano": "^4.1.10",
+    "js-cookie": "^2.2.1",
     "lowdb": "^1.0.0",
     "md5": "^2.2.1",
     "node-fetch": "^2.6.0",
@@ -31,7 +32,6 @@
     "svelte": "^3.0.0"
   },
   "scripts": {
-    "serve": "npx @11ty/eleventy --serve",
     "build": "npx @11ty/eleventy; npx ./bin/assetHashing.js",
     "dev:svelte": "rollup -c -w",
     "watch": "npm-run-all --parallel dev:svelte watch:html",

@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { cart, cartTotal, isCartRestored } from "./stores.js";
+  import { cart, isCartRestored } from "./stores.js";
   import CartItem from "./CartItem.svelte";
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
@@ -61,7 +61,7 @@
 <div class="flex-auto" />
 <div class="flex w-full px-4">
   <h3 class="flex-auto self-center uppercase font-bold">Total</h3>
-  <span class="text-2xl text-green-600">${$cartTotal}</span>
+  <span class="text-2xl text-green-600">Cart total</span>
 </div>
 <a
   href="#"
