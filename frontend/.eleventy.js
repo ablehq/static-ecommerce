@@ -3,12 +3,13 @@ module.exports = function(config) {
   config.addPassthroughCopy({ "source/images": "assets" });
   config.addWatchTarget("./source/*/*.pcss");
   config.addPassthroughCopy({
-    "source/javascripts/*": "assets/js"
+    "source/_includes/js/*": "assets/js"
   });
   return {
     dir: {
       input: "source",
       output: "dist",
+      includes: "_includes",
       layouts: "_layouts",
       data: "_data"
     }

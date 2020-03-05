@@ -1,5 +1,4 @@
 import { writable, derived } from "svelte/store";
-// import require from "@rollup/plugin-commonjs";
 import axios from "axios";
 import Cookies from "js-cookie";
 import low from "lowdb";
@@ -24,69 +23,77 @@ function createCartStatus() {
       set({
         status: "in-progress"
       });
-      let orderTokenProm = new Promise(resolve => {
-        return resolve(getOrderToken());
-      });
-      orderTokenProm
-        .then(token => {
-          if (token) {
-            return token;
-          } else {
-            return axios
-              .post("http://localhost:3000/api/v2/storefront/cart", {})
-              .then(response => {
-                const orderToken = response.data.data.attributes.token;
-                Cookies.set("orderToken", orderToken);
-                return orderToken;
-              });
-          }
-        })
-        .then(token => {
-          axios
-            .get(
-              "http://localhost:3000/api/v2/storefront/cart?include=line_items%2Cvariants%2Cvariants.images",
-              {
-                headers: {
-                  "X-Spree-Order-Token": token
-                }
-              }
-            )
-            .then(function(response) {
-              const respCart = response.data;
-              const resp = respCart.included
-                .filter(it => it.type === "line_item")
-                .map(it => ({
-                  quantity: it.attributes.quantity,
-                  total: it.attributes.display_total,
-                  line_item_id: it.id,
-                  product: {
-                    id: it.relationships.variant.data.id,
-                    name: it.attributes.name,
-                    price: it.attributes.display_price,
-                    image:
-                      "http://localhost:3000/" +
-                      respCart.included.find(
-                        item =>
-                          item.type === "image" &&
-                          item.attributes.viewable_id.toString() ===
-                            it.relationships.variant.data.id
-                      ).attributes.styles[0].url
-                  }
-                }));
-              set({
-                status: "restored"
-              });
-              const value = db.get("cart").value();
-              console.log(resp);
-              cart.restore(resp);
-              return cart;
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
+      const value = db.get("cart").value();
+      setTimeout(() => {
+        set({
+          status: "restored"
         });
+        cart.restore(value);
+      }, 1500);
     }
   };
+
+  // let orderTokenProm = new Promise(resolve => {
+  //   return resolve(getOrderToken());
+  // });
+  // orderTokenProm
+  //   .then(token => {
+  //     if (token) {
+  //       return token;
+  //     } else {
+  //       return axios
+  //         .post("http://localhost:3000/api/v2/storefront/cart", {})
+  //         .then(response => {
+  //           const orderToken = response.data.data.attributes.token;
+  //           Cookies.set("orderToken", orderToken);
+  //           return orderToken;
+  //         });
+  //     }
+  //   })
+  //   .then(token => {
+  //     axios
+  //       .get(
+  //         "http://localhost:3000/api/v2/storefront/cart?include=line_items%2Cvariants%2Cvariants.images",
+  //         {
+  //           headers: {
+  //             "X-Spree-Order-Token": token
+  //           }
+  //         }
+  //       )
+  //       .then(function(response) {
+  //         const respCart = response.data;
+  //         const resp = respCart.included
+  //           .filter(it => it.type === "line_item")
+  //           .map(it => ({
+  //             quantity: it.attributes.quantity,
+  //             total: it.attributes.display_total,
+  //             line_item_id: it.id,
+  //             product: {
+  //               id: it.relationships.variant.data.id,
+  //               name: it.attributes.name,
+  //               price: it.attributes.display_price,
+  //               image:
+  //                 "http://localhost:3000/" +
+  //                 respCart.included.find(
+  //                   item =>
+  //                     item.type === "image" &&
+  //                     item.attributes.viewable_id.toString() ===
+  //                       it.relationships.variant.data.id
+  //                 ).attributes.styles[0].url
+  //             }
+  //           }));
+  //         set({
+  //           status: "restored"
+  //         });
+  //         const value = db.get("cart").value();
+  //         console.log(resp);
+  //         cart.restore(resp);
+  //         return cart;
+  //       })
+  //       .catch(function(error) {
+  //         console.log(error);
+  //       });
+  // });
 }
 
 const saveCart = cart => {

@@ -43,22 +43,26 @@
   <div class="w-16 h-12 mr-2 overflow-hidden rounded-4">
     <img src={product.image} alt="" class="w-full" />
   </div>
-  <div>
-    <p class="text-lg leading-none">{product.name}</p>
-    <span class="text-sm italic">
-      Rs{product.price} *
-      <span transition>{quantity}</span>
-    </span>
-    <span>{total}</span>
+  <div class="w-full">
+    <div class="flex">
+      <p class="flex-auto text-lg leading-none">{product.name}</p>
+      <div class="line-item-quantity">
+        <p class="text-sm opacity-50">
+          <a href="#" on:click={decrement}>-</a>
+          {quantity}
+          <a href="#" on:click={increment}>+</a>
+        </p>
+      </div>
+      <div class="ml-4 line-item-remove">
+        <a href="#" on:click={removeFromCart}>Remove</a>
+      </div>
+    </div>
+    <div class="flex block">
+      <div class="flex-auto text-sm italic">
+        Rs. {product.price} *
+        <span>{quantity}</span>
+      </div>
+      <p class="font-bold">Rs. {total}</p>
+    </div>
   </div>
-</div>
-<div>
-  <p class="text-sm opacity-50">
-    <a href="#" on:click={decrement}>-</a>
-    {quantity}
-    <a href="#" on:click={increment}>+</a>
-  </p>
-</div>
-<div class="ml-4">
-  <a href="#" on:click={removeFromCart}>Remove</a>
 </div>

@@ -7,9 +7,10 @@ const production = !process.env.ROLLUP_WATCH;
 export default {
   input: "svelte/main.js",
   output: {
+    sourcemap: true,
     format: "iife",
     name: "app",
-    file: "source/javascripts/bundle.js"
+    file: "source/_includes/js/bundle.js"
   },
   plugins: [
     svelte({

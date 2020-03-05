@@ -6,42 +6,44 @@ pagination:
   size: 4
 ---
 
-<div class="flex flex-col max-h-screen min-h-screen overflow-hidden relative">
-  <div class="banner flex flex-auto" id="header">
-    <h1 class="absolute text-white text-6xl font-black top-0 left-0 ml-12 mt-8">
-      Watches
-    </h1>
-  </div>
-  <ul class="flex mt-12">
-    {%- for product in products %}
-    <li
-      class="product overflow-hidden p-4"
-      data-id="{{ product.id }}"
-      data-name="{{ product.attributes.name }}"
-      data-price="{{ product.attributes.price }}"
-      data-image="/assets/product{{ product.id }}.jpg"
-    >
-      <a
-        href="/products/{{ product.attributes.slug }}"
-        class="overflow-hidden h-64 rounded-lg block product-link"
+<div class=" overflow-hidden relative">
+  <div id="main-container" class=" flex flex-col max-h-screen min-h-screen h-screen">
+    <div class="banner flex flex-auto" id="header">
+      <h1 class="absolute text-white text-6xl font-black top-0 left-0 ml-12 mt-8">
+        Watches
+      </h1>
+    </div>
+    <ul class="flex mt-8 w-full max-w-screen-xl m-auto">
+      {%- for product in products %}
+      <li
+        class="product overflow-hidden p-4"
+        data-id="{{ product.id }}"
+        data-name="{{ product.attributes.name }}"
+        data-price="{{ product.attributes.price }}"
+        data-image="/assets/product{{ product.id }}.jpg"
       >
-        <img
-          src="/assets/product{{ product.id }}.jpg"
-          alt="chrono watch image"
-          class="max-w-none h-full"
-        />
-      </a>
-      <div class="product-info flex mt-4 px-2">
-        <h2 class="text-2xl font-black flex-auto">
-          {{ product.attributes.name }}
-        </h2>
-      </div>
-    </li>
-    {%endfor -%}}
-  </ul>
+        <a
+          href="/products/{{ product.attributes.slug }}"
+          class="overflow-hidden h-64 rounded-lg block product-link"
+        >
+          <img
+            src="/assets/product{{ product.id }}.jpg"
+            alt="chrono watch image"
+            class="max-w-none h-full"
+          />
+        </a>
+        <div class="product-info flex mt-4 px-2">
+          <h2 class="text-2xl font-black flex-auto">
+            {{ product.attributes.name }}
+          </h2>
+        </div>
+      </li>
+      {%endfor-%}
+    </ul>
+  </div>
 
   <div
     id="cart"
-    class="flex flex-col flex-wrap absolute top-0 right-0 bottom-0 bg-white w-1/3"
+    class="cart"
   ></div>
 </div>

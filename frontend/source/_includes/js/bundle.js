@@ -19622,69 +19622,77 @@ var app = (function () {
           set({
             status: "in-progress"
           });
-          let orderTokenProm = new Promise(resolve => {
-            return resolve(getOrderToken());
-          });
-          orderTokenProm
-            .then(token => {
-              if (token) {
-                return token;
-              } else {
-                return axios$1
-                  .post("http://localhost:3000/api/v2/storefront/cart", {})
-                  .then(response => {
-                    const orderToken = response.data.data.attributes.token;
-                    js_cookie.set("orderToken", orderToken);
-                    return orderToken;
-                  });
-              }
-            })
-            .then(token => {
-              axios$1
-                .get(
-                  "http://localhost:3000/api/v2/storefront/cart?include=line_items%2Cvariants%2Cvariants.images",
-                  {
-                    headers: {
-                      "X-Spree-Order-Token": token
-                    }
-                  }
-                )
-                .then(function(response) {
-                  const respCart = response.data;
-                  const resp = respCart.included
-                    .filter(it => it.type === "line_item")
-                    .map(it => ({
-                      quantity: it.attributes.quantity,
-                      total: it.attributes.display_total,
-                      line_item_id: it.id,
-                      product: {
-                        id: it.relationships.variant.data.id,
-                        name: it.attributes.name,
-                        price: it.attributes.display_price,
-                        image:
-                          "http://localhost:3000/" +
-                          respCart.included.find(
-                            item =>
-                              item.type === "image" &&
-                              item.attributes.viewable_id.toString() ===
-                                it.relationships.variant.data.id
-                          ).attributes.styles[0].url
-                      }
-                    }));
-                  set({
-                    status: "restored"
-                  });
-                  const value = db.get("cart").value();
-                  console.log(resp);
-                  cart.restore(resp);
-                  return cart;
-                })
-                .catch(function(error) {
-                  console.log(error);
-                });
+          const value = db.get("cart").value();
+          setTimeout(() => {
+            set({
+              status: "restored"
             });
+            cart.restore(value);
+          }, 1500);
         }
       };
+
+      // let orderTokenProm = new Promise(resolve => {
+      //   return resolve(getOrderToken());
+      // });
+      // orderTokenProm
+      //   .then(token => {
+      //     if (token) {
+      //       return token;
+      //     } else {
+      //       return axios
+      //         .post("http://localhost:3000/api/v2/storefront/cart", {})
+      //         .then(response => {
+      //           const orderToken = response.data.data.attributes.token;
+      //           Cookies.set("orderToken", orderToken);
+      //           return orderToken;
+      //         });
+      //     }
+      //   })
+      //   .then(token => {
+      //     axios
+      //       .get(
+      //         "http://localhost:3000/api/v2/storefront/cart?include=line_items%2Cvariants%2Cvariants.images",
+      //         {
+      //           headers: {
+      //             "X-Spree-Order-Token": token
+      //           }
+      //         }
+      //       )
+      //       .then(function(response) {
+      //         const respCart = response.data;
+      //         const resp = respCart.included
+      //           .filter(it => it.type === "line_item")
+      //           .map(it => ({
+      //             quantity: it.attributes.quantity,
+      //             total: it.attributes.display_total,
+      //             line_item_id: it.id,
+      //             product: {
+      //               id: it.relationships.variant.data.id,
+      //               name: it.attributes.name,
+      //               price: it.attributes.display_price,
+      //               image:
+      //                 "http://localhost:3000/" +
+      //                 respCart.included.find(
+      //                   item =>
+      //                     item.type === "image" &&
+      //                     item.attributes.viewable_id.toString() ===
+      //                       it.relationships.variant.data.id
+      //                 ).attributes.styles[0].url
+      //             }
+      //           }));
+      //         set({
+      //           status: "restored"
+      //         });
+      //         const value = db.get("cart").value();
+      //         console.log(resp);
+      //         cart.restore(resp);
+      //         return cart;
+      //       })
+      //       .catch(function(error) {
+      //         console.log(error);
+      //       });
+      // });
     }
 
     const saveCart = cart => {
@@ -20073,6 +20081,20 @@ var app = (function () {
     	}
     }
 
+    const cartStatus$1 = writable("expandCart");
+    // return {
+    //   subscribe,
+    //   setStatus: () => {
+    //     if (state == 2) {
+    //       set({ status: "expandCart" });
+    //     } else if (state == 3) {
+    //       set({ status: "showPayment" });
+    //     } else if (state == 4) {
+    //       set({ status: "showConfirmation" });
+    //     }
+    //   }
+    // };
+
     function cubicOut(t) {
         const f = t - 1.0;
         return f * f * f + 1.0;
@@ -20179,134 +20201,149 @@ var app = (function () {
     const file$1 = "svelte/CartItem.svelte";
 
     function create_fragment$1(ctx) {
-    	let div2;
+    	let div7;
     	let div0;
     	let img;
     	let img_src_value;
     	let t0;
-    	let div1;
+    	let div6;
+    	let div3;
     	let p0;
     	let t1_value = /*product*/ ctx[0].name + "";
     	let t1;
     	let t2;
-    	let span1;
-    	let t3;
-    	let t4_value = /*product*/ ctx[0].price + "";
-    	let t4;
-    	let t5;
-    	let span0;
-    	let t6;
-    	let t7;
-    	let span2;
-    	let t8;
-    	let div2_data_line_item_id_value;
-    	let t9;
-    	let div3;
+    	let div1;
     	let p1;
     	let a0;
+    	let t4;
+    	let t5;
+    	let t6;
+    	let a1;
+    	let t8;
+    	let div2;
+    	let a2;
+    	let t10;
+    	let div5;
+    	let div4;
     	let t11;
+    	let t12_value = /*product*/ ctx[0].price + "";
     	let t12;
     	let t13;
-    	let a1;
+    	let span;
+    	let t14;
     	let t15;
-    	let div4;
-    	let a2;
+    	let p2;
+    	let t16;
+    	let t17;
+    	let div7_data_line_item_id_value;
     	let dispose;
 
     	const block = {
     		c: function create() {
-    			div2 = element("div");
+    			div7 = element("div");
     			div0 = element("div");
     			img = element("img");
     			t0 = space();
-    			div1 = element("div");
+    			div6 = element("div");
+    			div3 = element("div");
     			p0 = element("p");
     			t1 = text(t1_value);
     			t2 = space();
-    			span1 = element("span");
-    			t3 = text("Rs");
-    			t4 = text(t4_value);
-    			t5 = text(" *\n      ");
-    			span0 = element("span");
-    			t6 = text(/*quantity*/ ctx[1]);
-    			t7 = space();
-    			span2 = element("span");
-    			t8 = text(/*total*/ ctx[2]);
-    			t9 = space();
-    			div3 = element("div");
+    			div1 = element("div");
     			p1 = element("p");
     			a0 = element("a");
     			a0.textContent = "-";
-    			t11 = space();
-    			t12 = text(/*quantity*/ ctx[1]);
-    			t13 = space();
+    			t4 = space();
+    			t5 = text(/*quantity*/ ctx[1]);
+    			t6 = space();
     			a1 = element("a");
     			a1.textContent = "+";
-    			t15 = space();
-    			div4 = element("div");
+    			t8 = space();
+    			div2 = element("div");
     			a2 = element("a");
     			a2.textContent = "Remove";
+    			t10 = space();
+    			div5 = element("div");
+    			div4 = element("div");
+    			t11 = text("Rs. ");
+    			t12 = text(t12_value);
+    			t13 = text(" *\n        ");
+    			span = element("span");
+    			t14 = text(/*quantity*/ ctx[1]);
+    			t15 = space();
+    			p2 = element("p");
+    			t16 = text("Rs. ");
+    			t17 = text(/*total*/ ctx[2]);
     			if (img.src !== (img_src_value = /*product*/ ctx[0].image)) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
     			attr_dev(img, "class", "w-full");
     			add_location(img, file$1, 43, 4, 1040);
     			attr_dev(div0, "class", "w-16 h-12 mr-2 overflow-hidden rounded-4");
     			add_location(div0, file$1, 42, 2, 981);
-    			attr_dev(p0, "class", "text-lg leading-none");
-    			add_location(p0, file$1, 46, 4, 1111);
-    			attr_dev(span0, "transition", "");
-    			add_location(span0, file$1, 49, 6, 1228);
-    			attr_dev(span1, "class", "text-sm italic");
-    			add_location(span1, file$1, 47, 4, 1166);
-    			add_location(span2, file$1, 51, 4, 1279);
-    			add_location(div1, file$1, 45, 2, 1101);
-    			attr_dev(div2, "class", "flex flex-auto");
-    			attr_dev(div2, "data-line-item-id", div2_data_line_item_id_value = /*product*/ ctx[0].id);
-    			add_location(div2, file$1, 41, 0, 919);
+    			attr_dev(p0, "class", "flex-auto text-lg leading-none");
+    			add_location(p0, file$1, 47, 6, 1151);
     			attr_dev(a0, "href", "#");
-    			add_location(a0, file$1, 56, 4, 1359);
+    			add_location(a0, file$1, 50, 10, 1300);
     			attr_dev(a1, "href", "#");
-    			add_location(a1, file$1, 58, 4, 1417);
+    			add_location(a1, file$1, 52, 10, 1370);
     			attr_dev(p1, "class", "text-sm opacity-50");
-    			add_location(p1, file$1, 55, 2, 1324);
-    			add_location(div3, file$1, 54, 0, 1316);
+    			add_location(p1, file$1, 49, 8, 1259);
+    			attr_dev(div1, "class", "line-item-quantity");
+    			add_location(div1, file$1, 48, 6, 1218);
     			attr_dev(a2, "href", "#");
-    			add_location(a2, file$1, 62, 2, 1491);
-    			attr_dev(div4, "class", "ml-4");
-    			add_location(div4, file$1, 61, 0, 1470);
+    			add_location(a2, file$1, 56, 8, 1485);
+    			attr_dev(div2, "class", "ml-4 line-item-remove");
+    			add_location(div2, file$1, 55, 6, 1441);
+    			attr_dev(div3, "class", "flex");
+    			add_location(div3, file$1, 46, 4, 1126);
+    			add_location(span, file$1, 62, 8, 1670);
+    			attr_dev(div4, "class", "flex-auto text-sm italic");
+    			add_location(div4, file$1, 60, 6, 1593);
+    			attr_dev(p2, "class", "font-bold");
+    			add_location(p2, file$1, 64, 6, 1713);
+    			attr_dev(div5, "class", "flex block");
+    			add_location(div5, file$1, 59, 4, 1562);
+    			attr_dev(div6, "class", "w-full");
+    			add_location(div6, file$1, 45, 2, 1101);
+    			attr_dev(div7, "class", "flex flex-auto");
+    			attr_dev(div7, "data-line-item-id", div7_data_line_item_id_value = /*product*/ ctx[0].id);
+    			add_location(div7, file$1, 41, 0, 919);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div2, anchor);
-    			append_dev(div2, div0);
+    			insert_dev(target, div7, anchor);
+    			append_dev(div7, div0);
     			append_dev(div0, img);
-    			append_dev(div2, t0);
-    			append_dev(div2, div1);
-    			append_dev(div1, p0);
+    			append_dev(div7, t0);
+    			append_dev(div7, div6);
+    			append_dev(div6, div3);
+    			append_dev(div3, p0);
     			append_dev(p0, t1);
-    			append_dev(div1, t2);
-    			append_dev(div1, span1);
-    			append_dev(span1, t3);
-    			append_dev(span1, t4);
-    			append_dev(span1, t5);
-    			append_dev(span1, span0);
-    			append_dev(span0, t6);
-    			append_dev(div1, t7);
-    			append_dev(div1, span2);
-    			append_dev(span2, t8);
-    			insert_dev(target, t9, anchor);
-    			insert_dev(target, div3, anchor);
-    			append_dev(div3, p1);
+    			append_dev(div3, t2);
+    			append_dev(div3, div1);
+    			append_dev(div1, p1);
     			append_dev(p1, a0);
-    			append_dev(p1, t11);
-    			append_dev(p1, t12);
-    			append_dev(p1, t13);
+    			append_dev(p1, t4);
+    			append_dev(p1, t5);
+    			append_dev(p1, t6);
     			append_dev(p1, a1);
-    			insert_dev(target, t15, anchor);
-    			insert_dev(target, div4, anchor);
-    			append_dev(div4, a2);
+    			append_dev(div3, t8);
+    			append_dev(div3, div2);
+    			append_dev(div2, a2);
+    			append_dev(div6, t10);
+    			append_dev(div6, div5);
+    			append_dev(div5, div4);
+    			append_dev(div4, t11);
+    			append_dev(div4, t12);
+    			append_dev(div4, t13);
+    			append_dev(div4, span);
+    			append_dev(span, t14);
+    			append_dev(div5, t15);
+    			append_dev(div5, p2);
+    			append_dev(p2, t16);
+    			append_dev(p2, t17);
 
     			dispose = [
     				listen_dev(a0, "click", /*decrement*/ ctx[5], false, false, false),
@@ -20320,24 +20357,19 @@ var app = (function () {
     			}
 
     			if (dirty & /*product*/ 1 && t1_value !== (t1_value = /*product*/ ctx[0].name + "")) set_data_dev(t1, t1_value);
-    			if (dirty & /*product*/ 1 && t4_value !== (t4_value = /*product*/ ctx[0].price + "")) set_data_dev(t4, t4_value);
-    			if (dirty & /*quantity*/ 2) set_data_dev(t6, /*quantity*/ ctx[1]);
-    			if (dirty & /*total*/ 4) set_data_dev(t8, /*total*/ ctx[2]);
+    			if (dirty & /*quantity*/ 2) set_data_dev(t5, /*quantity*/ ctx[1]);
+    			if (dirty & /*product*/ 1 && t12_value !== (t12_value = /*product*/ ctx[0].price + "")) set_data_dev(t12, t12_value);
+    			if (dirty & /*quantity*/ 2) set_data_dev(t14, /*quantity*/ ctx[1]);
+    			if (dirty & /*total*/ 4) set_data_dev(t17, /*total*/ ctx[2]);
 
-    			if (dirty & /*product*/ 1 && div2_data_line_item_id_value !== (div2_data_line_item_id_value = /*product*/ ctx[0].id)) {
-    				attr_dev(div2, "data-line-item-id", div2_data_line_item_id_value);
+    			if (dirty & /*product*/ 1 && div7_data_line_item_id_value !== (div7_data_line_item_id_value = /*product*/ ctx[0].id)) {
+    				attr_dev(div7, "data-line-item-id", div7_data_line_item_id_value);
     			}
-
-    			if (dirty & /*quantity*/ 2) set_data_dev(t12, /*quantity*/ ctx[1]);
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div2);
-    			if (detaching) detach_dev(t9);
-    			if (detaching) detach_dev(div3);
-    			if (detaching) detach_dev(t15);
-    			if (detaching) detach_dev(div4);
+    			if (detaching) detach_dev(div7);
     			run_all(dispose);
     		}
     	};
@@ -20492,21 +20524,191 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[3] = list[i].product;
-    	child_ctx[4] = list[i].quantity;
-    	child_ctx[5] = list[i].total;
+    	child_ctx[11] = list[i].product;
+    	child_ctx[12] = list[i].quantity;
+    	child_ctx[13] = list[i].total;
     	return child_ctx;
     }
 
-    // (49:0) {#if $cart.length > 0}
-    function create_if_block$1(ctx) {
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[11] = list[i].product;
+    	child_ctx[12] = list[i].quantity;
+    	child_ctx[13] = list[i].total;
+    	return child_ctx;
+    }
+
+    // (176:8) {#if $cart.length > 0}
+    function create_if_block_4(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
-    	let each_value = /*$cart*/ ctx[0];
+    	let each_value_1 = /*$cart*/ ctx[1];
+    	validate_each_argument(each_value_1);
+    	const get_key = ctx => /*product*/ ctx[11].id;
+    	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		let child_ctx = get_each_context_1(ctx, each_value_1, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block_1(key, child_ctx));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$cart*/ 2) {
+    				const each_value_1 = /*$cart*/ ctx[1];
+    				validate_each_argument(each_value_1);
+    				group_outros();
+    				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block_1, each_1_anchor, get_each_context_1);
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_4.name,
+    		type: "if",
+    		source: "(176:8) {#if $cart.length > 0}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (177:10) {#each $cart as { product, quantity, total }
+    function create_each_block_1(key_1, ctx) {
+    	let li;
+    	let t;
+    	let li_intro;
+    	let li_outro;
+    	let current;
+
+    	const cartitem = new CartItem({
+    			props: {
+    				product: /*product*/ ctx[11],
+    				quantity: /*quantity*/ ctx[12],
+    				total: /*total*/ ctx[13]
+    			},
+    			$$inline: true
+    		});
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			li = element("li");
+    			create_component(cartitem.$$.fragment);
+    			t = space();
+    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n              border-gray-200");
+    			add_location(li, file$2, 177, 12, 5409);
+    			this.first = li;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			mount_component(cartitem, li, null);
+    			append_dev(li, t);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const cartitem_changes = {};
+    			if (dirty & /*$cart*/ 2) cartitem_changes.product = /*product*/ ctx[11];
+    			if (dirty & /*$cart*/ 2) cartitem_changes.quantity = /*quantity*/ ctx[12];
+    			if (dirty & /*$cart*/ 2) cartitem_changes.total = /*total*/ ctx[13];
+    			cartitem.$set(cartitem_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(cartitem.$$.fragment, local);
+
+    			if (local) {
+    				add_render_callback(() => {
+    					if (li_outro) li_outro.end(1);
+    					if (!li_intro) li_intro = create_in_transition(li, /*receive*/ ctx[8], {});
+    					li_intro.start();
+    				});
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(cartitem.$$.fragment, local);
+    			if (li_intro) li_intro.invalidate();
+
+    			if (local) {
+    				li_outro = create_out_transition(li, /*send*/ ctx[7], {});
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    			destroy_component(cartitem);
+    			if (detaching && li_outro) li_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(177:10) {#each $cart as { product, quantity, total }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (206:8) {#if $cart.length > 0}
+    function create_if_block_3(ctx) {
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
+    	let each_1_anchor;
+    	let current;
+    	let each_value = /*$cart*/ ctx[1];
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*product*/ ctx[3].id;
+    	const get_key = ctx => /*product*/ ctx[11].id;
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -20532,8 +20734,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$cart*/ 1) {
-    				const each_value = /*$cart*/ ctx[0];
+    			if (dirty & /*$cart*/ 2) {
+    				const each_value = /*$cart*/ ctx[1];
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -20568,16 +20770,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block_3.name,
     		type: "if",
-    		source: "(49:0) {#if $cart.length > 0}",
+    		source: "(206:8) {#if $cart.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (50:2) {#each $cart as { product, quantity, total }
+    // (207:10) {#each $cart as { product, quantity, total }
     function create_each_block(key_1, ctx) {
     	let li;
     	let t;
@@ -20587,9 +20789,9 @@ var app = (function () {
 
     	const cartitem = new CartItem({
     			props: {
-    				product: /*product*/ ctx[3],
-    				quantity: /*quantity*/ ctx[4],
-    				total: /*total*/ ctx[5]
+    				product: /*product*/ ctx[11],
+    				quantity: /*quantity*/ ctx[12],
+    				total: /*total*/ ctx[13]
     			},
     			$$inline: true
     		});
@@ -20601,8 +20803,8 @@ var app = (function () {
     			li = element("li");
     			create_component(cartitem.$$.fragment);
     			t = space();
-    			attr_dev(li, "class", "bg-white flex my-2 w-full self-start px-4");
-    			add_location(li, file$2, 50, 4, 1232);
+    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n              border-gray-200");
+    			add_location(li, file$2, 207, 12, 6323);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -20613,9 +20815,9 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const cartitem_changes = {};
-    			if (dirty & /*$cart*/ 1) cartitem_changes.product = /*product*/ ctx[3];
-    			if (dirty & /*$cart*/ 1) cartitem_changes.quantity = /*quantity*/ ctx[4];
-    			if (dirty & /*$cart*/ 1) cartitem_changes.total = /*total*/ ctx[5];
+    			if (dirty & /*$cart*/ 2) cartitem_changes.product = /*product*/ ctx[11];
+    			if (dirty & /*$cart*/ 2) cartitem_changes.quantity = /*quantity*/ ctx[12];
+    			if (dirty & /*$cart*/ 2) cartitem_changes.total = /*total*/ ctx[13];
     			cartitem.$set(cartitem_changes);
     		},
     		i: function intro(local) {
@@ -20625,7 +20827,7 @@ var app = (function () {
     			if (local) {
     				add_render_callback(() => {
     					if (li_outro) li_outro.end(1);
-    					if (!li_intro) li_intro = create_in_transition(li, /*receive*/ ctx[2], {});
+    					if (!li_intro) li_intro = create_in_transition(li, /*receive*/ ctx[8], {});
     					li_intro.start();
     				});
     			}
@@ -20637,7 +20839,7 @@ var app = (function () {
     			if (li_intro) li_intro.invalidate();
 
     			if (local) {
-    				li_outro = create_out_transition(li, /*send*/ ctx[1], {});
+    				li_outro = create_out_transition(li, /*send*/ ctx[7], {});
     			}
 
     			current = false;
@@ -20653,7 +20855,112 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(50:2) {#each $cart as { product, quantity, total }",
+    		source: "(207:10) {#each $cart as { product, quantity, total }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (242:44) 
+    function create_if_block_2(ctx) {
+    	let a;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			a = element("a");
+    			a.textContent = "Checkout";
+    			attr_dev(a, "href", "#");
+    			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
+    			add_location(a, file$2, 242, 2, 7219);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, a, anchor);
+    			dispose = listen_dev(a, "click", /*showConfirmation*/ ctx[6], false, false, false);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(a);
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(242:44) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (235:39) 
+    function create_if_block_1(ctx) {
+    	let a;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			a = element("a");
+    			a.textContent = "Checkout";
+    			attr_dev(a, "href", "#");
+    			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
+    			add_location(a, file$2, 235, 2, 7034);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, a, anchor);
+    			dispose = listen_dev(a, "click", /*showPayment*/ ctx[5], false, false, false);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(a);
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(235:39) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (228:0) {#if $cartStatus == 'expandCart'}
+    function create_if_block$1(ctx) {
+    	let a;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			a = element("a");
+    			a.textContent = "Checkout";
+    			attr_dev(a, "href", "#");
+    			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
+    			add_location(a, file$2, 228, 2, 6855);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, a, anchor);
+    			dispose = listen_dev(a, "click", /*expandCart*/ ctx[4], false, false, false);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(a);
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(228:0) {#if $cartStatus == 'expandCart'}",
     		ctx
     	});
 
@@ -20666,23 +20973,102 @@ var app = (function () {
     	let t0;
     	let a0;
     	let t2;
+    	let div13;
     	let div2;
     	let h1;
+    	let t3;
     	let t4;
     	let a1;
     	let t6;
-    	let t7;
-    	let div3;
-    	let t8;
+    	let div12;
     	let div4;
-    	let h3;
-    	let t10;
-    	let span;
+    	let div3;
+    	let label0;
+    	let t8;
+    	let input0;
+    	let t9;
+    	let label1;
+    	let t11;
+    	let input1;
     	let t12;
-    	let a2;
+    	let label2;
+    	let t14;
+    	let input2;
+    	let t15;
+    	let label3;
+    	let t17;
+    	let input3;
+    	let t18;
+    	let label4;
+    	let t20;
+    	let input4;
+    	let t21;
+    	let label5;
+    	let t23;
+    	let input5;
+    	let t24;
+    	let label6;
+    	let t26;
+    	let input6;
+    	let t27;
+    	let div9;
+    	let label7;
+    	let t29;
+    	let input7;
+    	let t30;
+    	let div8;
+    	let div5;
+    	let label8;
+    	let t32;
+    	let input8;
+    	let t33;
+    	let div6;
+    	let label9;
+    	let t35;
+    	let input9;
+    	let t36;
+    	let div7;
+    	let label10;
+    	let t38;
+    	let input10;
+    	let t39;
+    	let div11;
+    	let ul0;
+    	let t40;
+    	let div10;
+    	let h30;
+    	let t42;
+    	let span0;
+    	let t44;
+    	let div18;
+    	let div14;
+    	let h31;
+    	let t46;
+    	let p;
+    	let t48;
+    	let div17;
+    	let div16;
+    	let ul1;
+    	let t49;
+    	let div15;
+    	let h32;
+    	let t51;
+    	let span1;
+    	let t53;
+    	let if_block2_anchor;
     	let current;
     	let dispose;
-    	let if_block = /*$cart*/ ctx[0].length > 0 && create_if_block$1(ctx);
+    	let if_block0 = /*$cart*/ ctx[1].length > 0 && create_if_block_4(ctx);
+    	let if_block1 = /*$cart*/ ctx[1].length > 0 && create_if_block_3(ctx);
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*$cartStatus*/ ctx[2] == "expandCart") return create_if_block$1;
+    		if (/*$cartStatus*/ ctx[2] == "showPayment") return create_if_block_1;
+    		if (/*$cartStatus*/ ctx[2] == "showConfirmation") return create_if_block_2;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block2 = current_block_type && current_block_type(ctx);
 
     	const block = {
     		c: function create() {
@@ -20692,51 +21078,247 @@ var app = (function () {
     			a0 = element("a");
     			a0.textContent = "Close";
     			t2 = space();
+    			div13 = element("div");
     			div2 = element("div");
     			h1 = element("h1");
-    			h1.textContent = "Cart";
+    			t3 = text(/*cartText*/ ctx[0]);
     			t4 = space();
     			a1 = element("a");
     			a1.textContent = "Reset";
     			t6 = space();
-    			if (if_block) if_block.c();
-    			t7 = space();
-    			div3 = element("div");
-    			t8 = space();
+    			div12 = element("div");
     			div4 = element("div");
-    			h3 = element("h3");
-    			h3.textContent = "Total";
-    			t10 = space();
-    			span = element("span");
-    			span.textContent = "Cart total";
+    			div3 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Email";
+    			t8 = space();
+    			input0 = element("input");
+    			t9 = space();
+    			label1 = element("label");
+    			label1.textContent = "Phone";
+    			t11 = space();
+    			input1 = element("input");
     			t12 = space();
-    			a2 = element("a");
-    			a2.textContent = "Checkout";
+    			label2 = element("label");
+    			label2.textContent = "Name";
+    			t14 = space();
+    			input2 = element("input");
+    			t15 = space();
+    			label3 = element("label");
+    			label3.textContent = "Zip";
+    			t17 = space();
+    			input3 = element("input");
+    			t18 = space();
+    			label4 = element("label");
+    			label4.textContent = "City";
+    			t20 = space();
+    			input4 = element("input");
+    			t21 = space();
+    			label5 = element("label");
+    			label5.textContent = "State";
+    			t23 = space();
+    			input5 = element("input");
+    			t24 = space();
+    			label6 = element("label");
+    			label6.textContent = "Address";
+    			t26 = space();
+    			input6 = element("input");
+    			t27 = space();
+    			div9 = element("div");
+    			label7 = element("label");
+    			label7.textContent = "Card Number";
+    			t29 = space();
+    			input7 = element("input");
+    			t30 = space();
+    			div8 = element("div");
+    			div5 = element("div");
+    			label8 = element("label");
+    			label8.textContent = "CVV";
+    			t32 = space();
+    			input8 = element("input");
+    			t33 = space();
+    			div6 = element("div");
+    			label9 = element("label");
+    			label9.textContent = "Expiry";
+    			t35 = space();
+    			input9 = element("input");
+    			t36 = space();
+    			div7 = element("div");
+    			label10 = element("label");
+    			label10.textContent = "Name on Card";
+    			t38 = space();
+    			input10 = element("input");
+    			t39 = space();
+    			div11 = element("div");
+    			ul0 = element("ul");
+    			if (if_block0) if_block0.c();
+    			t40 = space();
+    			div10 = element("div");
+    			h30 = element("h3");
+    			h30.textContent = "Total";
+    			t42 = space();
+    			span0 = element("span");
+    			span0.textContent = "Cart total";
+    			t44 = space();
+    			div18 = element("div");
+    			div14 = element("div");
+    			h31 = element("h3");
+    			h31.textContent = "Your order has been confirmed";
+    			t46 = space();
+    			p = element("p");
+    			p.textContent = "R37542347";
+    			t48 = space();
+    			div17 = element("div");
+    			div16 = element("div");
+    			ul1 = element("ul");
+    			if (if_block1) if_block1.c();
+    			t49 = space();
+    			div15 = element("div");
+    			h32 = element("h3");
+    			h32.textContent = "Total";
+    			t51 = space();
+    			span1 = element("span");
+    			span1.textContent = "Cart total";
+    			t53 = space();
+    			if (if_block2) if_block2.c();
+    			if_block2_anchor = empty();
     			attr_dev(div0, "class", "flex-auto");
-    			add_location(div0, file$2, 40, 2, 906);
+    			add_location(div0, file$2, 92, 2, 2374);
     			attr_dev(a0, "href", "#");
     			attr_dev(a0, "class", "hide-cart");
-    			add_location(a0, file$2, 41, 2, 934);
+    			add_location(a0, file$2, 93, 2, 2402);
     			attr_dev(div1, "class", "flex w-full mt-4 px-4 ");
-    			add_location(div1, file$2, 39, 0, 867);
-    			attr_dev(h1, "class", "flex-auto text-2xl font-black p-4");
-    			add_location(h1, file$2, 45, 2, 1023);
+    			add_location(div1, file$2, 91, 0, 2335);
+    			attr_dev(h1, "class", "flex-auto text-2xl font-black");
+    			add_location(h1, file$2, 98, 4, 2543);
     			attr_dev(a1, "href", "#");
-    			attr_dev(a1, "class", "mt-2 p-4");
-    			add_location(a1, file$2, 46, 2, 1081);
-    			attr_dev(div2, "class", "flex");
-    			add_location(div2, file$2, 44, 0, 1002);
-    			attr_dev(div3, "class", "flex-auto");
-    			add_location(div3, file$2, 60, 0, 1413);
-    			attr_dev(h3, "class", "flex-auto self-center uppercase font-bold");
-    			add_location(h3, file$2, 62, 2, 1472);
-    			attr_dev(span, "class", "text-2xl text-green-600");
-    			add_location(span, file$2, 63, 2, 1539);
-    			attr_dev(div4, "class", "flex w-full px-4");
-    			add_location(div4, file$2, 61, 0, 1439);
-    			attr_dev(a2, "href", "#");
-    			attr_dev(a2, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
-    			add_location(a2, file$2, 65, 0, 1602);
+    			attr_dev(a1, "class", "cart-reset mt-2");
+    			add_location(a1, file$2, 99, 4, 2605);
+    			attr_dev(div2, "class", "flex py-4");
+    			add_location(div2, file$2, 97, 2, 2515);
+    			attr_dev(label0, "class", "address-label");
+    			attr_dev(label0, "for", "email");
+    			add_location(label0, file$2, 104, 8, 2809);
+    			attr_dev(input0, "type", "text");
+    			attr_dev(input0, "id", "email");
+    			attr_dev(input0, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input0, file$2, 105, 8, 2872);
+    			attr_dev(div3, "class", "pb-2 mb-2 border-b border-gray-400");
+    			add_location(div3, file$2, 103, 6, 2752);
+    			attr_dev(label1, "class", "address-label");
+    			attr_dev(label1, "for", "phone");
+    			add_location(label1, file$2, 110, 6, 3017);
+    			attr_dev(input1, "type", "text");
+    			attr_dev(input1, "id", "phone");
+    			attr_dev(input1, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input1, file$2, 111, 6, 3078);
+    			attr_dev(label2, "class", "address-label");
+    			attr_dev(label2, "for", "name");
+    			add_location(label2, file$2, 115, 6, 3204);
+    			attr_dev(input2, "type", "text");
+    			attr_dev(input2, "id", "name");
+    			attr_dev(input2, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input2, file$2, 116, 6, 3263);
+    			attr_dev(label3, "class", "address-label");
+    			attr_dev(label3, "for", "zip");
+    			add_location(label3, file$2, 120, 6, 3388);
+    			attr_dev(input3, "type", "text");
+    			attr_dev(input3, "id", "zip");
+    			attr_dev(input3, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input3, file$2, 121, 6, 3445);
+    			attr_dev(label4, "class", "address-label");
+    			attr_dev(label4, "for", "city");
+    			add_location(label4, file$2, 125, 6, 3569);
+    			attr_dev(input4, "type", "text");
+    			attr_dev(input4, "id", "city");
+    			attr_dev(input4, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input4, file$2, 126, 6, 3628);
+    			attr_dev(label5, "class", "address-label");
+    			attr_dev(label5, "for", "state");
+    			add_location(label5, file$2, 130, 6, 3753);
+    			attr_dev(input5, "type", "text");
+    			attr_dev(input5, "id", "state");
+    			attr_dev(input5, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input5, file$2, 131, 6, 3814);
+    			attr_dev(label6, "class", "address-label");
+    			attr_dev(label6, "for", "address");
+    			add_location(label6, file$2, 135, 6, 3940);
+    			attr_dev(input6, "type", "text");
+    			attr_dev(input6, "id", "address");
+    			attr_dev(input6, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input6, file$2, 136, 6, 4005);
+    			attr_dev(div4, "class", "address hidden");
+    			add_location(div4, file$2, 102, 4, 2717);
+    			attr_dev(label7, "class", "address-label");
+    			attr_dev(label7, "for", "card-number");
+    			add_location(label7, file$2, 142, 6, 4177);
+    			attr_dev(input7, "type", "text");
+    			attr_dev(input7, "id", "card-number");
+    			attr_dev(input7, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input7, file$2, 143, 6, 4250);
+    			attr_dev(label8, "class", "address-label");
+    			attr_dev(label8, "for", "cvv");
+    			add_location(label8, file$2, 149, 10, 4438);
+    			attr_dev(input8, "type", "text");
+    			attr_dev(input8, "id", "cvv");
+    			attr_dev(input8, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input8, file$2, 150, 10, 4499);
+    			attr_dev(div5, "class", "mr-8");
+    			add_location(div5, file$2, 148, 8, 4409);
+    			attr_dev(label9, "class", "address-label");
+    			attr_dev(label9, "for", "expiry");
+    			add_location(label9, file$2, 156, 10, 4681);
+    			attr_dev(input9, "type", "date");
+    			attr_dev(input9, "id", "expiry");
+    			attr_dev(input9, "class", "address-input flex-auto focus:outline-none\n            focus:border-blue-500");
+    			add_location(input9, file$2, 157, 10, 4748);
+    			attr_dev(div6, "class", "mr-8");
+    			add_location(div6, file$2, 155, 8, 4652);
+    			attr_dev(label10, "class", "address-label");
+    			attr_dev(label10, "for", "name-on-card");
+    			add_location(label10, file$2, 164, 10, 4960);
+    			attr_dev(input10, "type", "text");
+    			attr_dev(input10, "id", "name-on-card");
+    			attr_dev(input10, "class", "address-input flex-auto focus:outline-none\n            focus:border-blue-500");
+    			add_location(input10, file$2, 165, 10, 5039);
+    			attr_dev(div7, "class", "flex-auto");
+    			add_location(div7, file$2, 163, 8, 4926);
+    			attr_dev(div8, "class", "flex");
+    			add_location(div8, file$2, 147, 6, 4382);
+    			attr_dev(div9, "class", "payment hidden");
+    			add_location(div9, file$2, 141, 4, 4142);
+    			add_location(ul0, file$2, 174, 6, 5292);
+    			attr_dev(h30, "class", "flex-auto self-center uppercase font-bold");
+    			add_location(h30, file$2, 190, 8, 5735);
+    			attr_dev(span0, "class", "text-2xl text-green-600");
+    			add_location(span0, file$2, 191, 8, 5808);
+    			attr_dev(div10, "class", "flex w-full");
+    			add_location(div10, file$2, 189, 6, 5701);
+    			attr_dev(div11, "class", "line-items w-full self-start");
+    			add_location(div11, file$2, 173, 4, 5243);
+    			attr_dev(div12, "class", "step-container flex");
+    			add_location(div12, file$2, 101, 2, 2679);
+    			attr_dev(div13, "class", "cart-container flex-auto p-4");
+    			add_location(div13, file$2, 96, 0, 2470);
+    			attr_dev(h31, "class", "text-2xl font-bold");
+    			add_location(h31, file$2, 199, 4, 6007);
+    			attr_dev(p, "class", "font-bold");
+    			add_location(p, file$2, 200, 4, 6077);
+    			attr_dev(div14, "class", "mb-12 text-center");
+    			add_location(div14, file$2, 198, 2, 5971);
+    			add_location(ul1, file$2, 204, 6, 6206);
+    			attr_dev(h32, "class", "flex-auto self-center uppercase font-bold");
+    			add_location(h32, file$2, 220, 8, 6649);
+    			attr_dev(span1, "class", "text-2xl text-green-600");
+    			add_location(span1, file$2, 221, 8, 6722);
+    			attr_dev(div15, "class", "flex w-full");
+    			add_location(div15, file$2, 219, 6, 6615);
+    			attr_dev(div16, "class", "line-items mx-auto w-full self-start");
+    			add_location(div16, file$2, 203, 4, 6149);
+    			attr_dev(div17, "class", "mx-auto");
+    			add_location(div17, file$2, 202, 2, 6123);
+    			attr_dev(div18, "class", "confirmation-container pt-24 flex-auto p-4 hidden");
+    			add_location(div18, file$2, 197, 0, 5905);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -20747,70 +21329,180 @@ var app = (function () {
     			append_dev(div1, t0);
     			append_dev(div1, a0);
     			insert_dev(target, t2, anchor);
-    			insert_dev(target, div2, anchor);
+    			insert_dev(target, div13, anchor);
+    			append_dev(div13, div2);
     			append_dev(div2, h1);
+    			append_dev(h1, t3);
     			append_dev(div2, t4);
     			append_dev(div2, a1);
-    			insert_dev(target, t6, anchor);
-    			if (if_block) if_block.m(target, anchor);
-    			insert_dev(target, t7, anchor);
-    			insert_dev(target, div3, anchor);
-    			insert_dev(target, t8, anchor);
-    			insert_dev(target, div4, anchor);
-    			append_dev(div4, h3);
-    			append_dev(div4, t10);
-    			append_dev(div4, span);
-    			insert_dev(target, t12, anchor);
-    			insert_dev(target, a2, anchor);
+    			append_dev(div13, t6);
+    			append_dev(div13, div12);
+    			append_dev(div12, div4);
+    			append_dev(div4, div3);
+    			append_dev(div3, label0);
+    			append_dev(div3, t8);
+    			append_dev(div3, input0);
+    			append_dev(div4, t9);
+    			append_dev(div4, label1);
+    			append_dev(div4, t11);
+    			append_dev(div4, input1);
+    			append_dev(div4, t12);
+    			append_dev(div4, label2);
+    			append_dev(div4, t14);
+    			append_dev(div4, input2);
+    			append_dev(div4, t15);
+    			append_dev(div4, label3);
+    			append_dev(div4, t17);
+    			append_dev(div4, input3);
+    			append_dev(div4, t18);
+    			append_dev(div4, label4);
+    			append_dev(div4, t20);
+    			append_dev(div4, input4);
+    			append_dev(div4, t21);
+    			append_dev(div4, label5);
+    			append_dev(div4, t23);
+    			append_dev(div4, input5);
+    			append_dev(div4, t24);
+    			append_dev(div4, label6);
+    			append_dev(div4, t26);
+    			append_dev(div4, input6);
+    			append_dev(div12, t27);
+    			append_dev(div12, div9);
+    			append_dev(div9, label7);
+    			append_dev(div9, t29);
+    			append_dev(div9, input7);
+    			append_dev(div9, t30);
+    			append_dev(div9, div8);
+    			append_dev(div8, div5);
+    			append_dev(div5, label8);
+    			append_dev(div5, t32);
+    			append_dev(div5, input8);
+    			append_dev(div8, t33);
+    			append_dev(div8, div6);
+    			append_dev(div6, label9);
+    			append_dev(div6, t35);
+    			append_dev(div6, input9);
+    			append_dev(div8, t36);
+    			append_dev(div8, div7);
+    			append_dev(div7, label10);
+    			append_dev(div7, t38);
+    			append_dev(div7, input10);
+    			append_dev(div12, t39);
+    			append_dev(div12, div11);
+    			append_dev(div11, ul0);
+    			if (if_block0) if_block0.m(ul0, null);
+    			append_dev(div11, t40);
+    			append_dev(div11, div10);
+    			append_dev(div10, h30);
+    			append_dev(div10, t42);
+    			append_dev(div10, span0);
+    			insert_dev(target, t44, anchor);
+    			insert_dev(target, div18, anchor);
+    			append_dev(div18, div14);
+    			append_dev(div14, h31);
+    			append_dev(div14, t46);
+    			append_dev(div14, p);
+    			append_dev(div18, t48);
+    			append_dev(div18, div17);
+    			append_dev(div17, div16);
+    			append_dev(div16, ul1);
+    			if (if_block1) if_block1.m(ul1, null);
+    			append_dev(div16, t49);
+    			append_dev(div16, div15);
+    			append_dev(div15, h32);
+    			append_dev(div15, t51);
+    			append_dev(div15, span1);
+    			insert_dev(target, t53, anchor);
+    			if (if_block2) if_block2.m(target, anchor);
+    			insert_dev(target, if_block2_anchor, anchor);
     			current = true;
 
     			dispose = [
-    				listen_dev(a0, "click", hideCart, false, false, false),
+    				listen_dev(a0, "click", /*hideCart*/ ctx[3], false, false, false),
     				listen_dev(a1, "click", reset, false, false, false)
     			];
     		},
     		p: function update(ctx, [dirty]) {
-    			if (/*$cart*/ ctx[0].length > 0) {
-    				if (if_block) {
-    					if_block.p(ctx, dirty);
-    					transition_in(if_block, 1);
+    			if (!current || dirty & /*cartText*/ 1) set_data_dev(t3, /*cartText*/ ctx[0]);
+
+    			if (/*$cart*/ ctx[1].length > 0) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    					transition_in(if_block0, 1);
     				} else {
-    					if_block = create_if_block$1(ctx);
-    					if_block.c();
-    					transition_in(if_block, 1);
-    					if_block.m(t7.parentNode, t7);
+    					if_block0 = create_if_block_4(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(ul0, null);
     				}
-    			} else if (if_block) {
+    			} else if (if_block0) {
     				group_outros();
 
-    				transition_out(if_block, 1, 1, () => {
-    					if_block = null;
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
     				});
 
     				check_outros();
     			}
+
+    			if (/*$cart*/ ctx[1].length > 0) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    					transition_in(if_block1, 1);
+    				} else {
+    					if_block1 = create_if_block_3(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(ul1, null);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block2) {
+    				if_block2.p(ctx, dirty);
+    			} else {
+    				if (if_block2) if_block2.d(1);
+    				if_block2 = current_block_type && current_block_type(ctx);
+
+    				if (if_block2) {
+    					if_block2.c();
+    					if_block2.m(if_block2_anchor.parentNode, if_block2_anchor);
+    				}
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(if_block);
+    			transition_in(if_block0);
+    			transition_in(if_block1);
     			current = true;
     		},
     		o: function outro(local) {
-    			transition_out(if_block);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
     			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
     			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(div2);
-    			if (detaching) detach_dev(t6);
-    			if (if_block) if_block.d(detaching);
-    			if (detaching) detach_dev(t7);
-    			if (detaching) detach_dev(div3);
-    			if (detaching) detach_dev(t8);
-    			if (detaching) detach_dev(div4);
-    			if (detaching) detach_dev(t12);
-    			if (detaching) detach_dev(a2);
+    			if (detaching) detach_dev(div13);
+    			if (if_block0) if_block0.d();
+    			if (detaching) detach_dev(t44);
+    			if (detaching) detach_dev(div18);
+    			if (if_block1) if_block1.d();
+    			if (detaching) detach_dev(t53);
+
+    			if (if_block2) {
+    				if_block2.d(detaching);
+    			}
+
+    			if (detaching) detach_dev(if_block2_anchor);
     			run_all(dispose);
     		}
     	};
@@ -20830,15 +21522,47 @@ var app = (function () {
     	cart.reset();
     }
 
-    function hideCart() {
-    	let cart = document.getElementById("cart");
-    	cart.classList.remove("show-cart");
-    }
-
     function instance$2($$self, $$props, $$invalidate) {
     	let $cart;
+    	let $cartStatus;
     	validate_store(cart, "cart");
-    	component_subscribe($$self, cart, $$value => $$invalidate(0, $cart = $$value));
+    	component_subscribe($$self, cart, $$value => $$invalidate(1, $cart = $$value));
+    	validate_store(cartStatus$1, "cartStatus");
+    	component_subscribe($$self, cartStatus$1, $$value => $$invalidate(2, $cartStatus = $$value));
+    	const cartContainer = document.getElementById("cart");
+    	const mainContainer = document.querySelector("#main-container");
+    	let cartText = "Cart";
+
+    	function hideCart() {
+    		cartContainer.classList.remove("show-cart", "expand-cart", "show-shipping", "show-payment", "show-confirmation");
+    		mainContainer.classList.remove("-translate-x-64");
+    		$$invalidate(0, cartText = "Cart");
+    		cartStatus$1.set("expandCart");
+    		cartContainer.querySelector(".cart-container").classList.remove("hidden");
+    		cartContainer.querySelector(".confirmation-container").classList.add("hidden");
+    	}
+
+    	function expandCart() {
+    		cartContainer.classList.remove("show-cart");
+    		cartContainer.classList.add("expand-cart", "show-shipping");
+    		mainContainer.classList.add("transition-all", "duration-500", "transform", "-translate-x-64");
+    		$$invalidate(0, cartText = "Checking out as Guest");
+    		cartStatus$1.set("showPayment");
+    	}
+
+    	function showPayment() {
+    		$$invalidate(0, cartText = "Payment");
+    		cartContainer.classList.remove("show-shipping");
+    		cartContainer.classList.add("show-payment");
+    		cartStatus$1.set("showConfirmation");
+    	}
+
+    	function showConfirmation() {
+    		cartContainer.classList.remove("show-paymnent");
+    		cartContainer.querySelector(".cart-container").classList.add("hidden");
+    		cartContainer.querySelector(".confirmation-container").classList.remove("hidden");
+    		cartStatus$1.set("");
+    	}
 
     	const [send, receive] = crossfade({
     		duration: d => Math.sqrt(d * 200),
@@ -20861,21 +21585,47 @@ var app = (function () {
     		onMount,
     		cart,
     		isCartRestored,
+    		cartStatus: cartStatus$1,
     		CartItem,
     		crossfade,
     		flip,
     		quintOut,
+    		cartContainer,
+    		mainContainer,
+    		cartText,
     		reset,
     		hideCart,
+    		expandCart,
+    		showPayment,
+    		showConfirmation,
     		send,
     		receive,
     		document,
     		Math,
     		getComputedStyle,
-    		$cart
+    		$cart,
+    		$cartStatus
     	});
 
-    	return [$cart, send, receive];
+    	$$self.$inject_state = $$props => {
+    		if ("cartText" in $$props) $$invalidate(0, cartText = $$props.cartText);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		cartText,
+    		$cart,
+    		$cartStatus,
+    		hideCart,
+    		expandCart,
+    		showPayment,
+    		showConfirmation,
+    		send,
+    		receive
+    	];
     }
 
     class Cart extends SvelteComponentDev {
@@ -20989,3 +21739,4 @@ var app = (function () {
     return app;
 
 }());
+//# sourceMappingURL=bundle.js.map

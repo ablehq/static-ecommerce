@@ -13,3 +13,47 @@
 .add-to-cart:hover {
  @apply bg-blue-400;
 }
+
+.address-label {
+  @apply block text-gray-600 text-sm font-bold mb-2
+}
+
+.address-input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight mb-4 transition-all duration-300
+}
+
+.cart {
+  @apply flex flex-col flex-wrap absolute top-0 right-0 bottom-0 bg-white w-1/3 transform translate-x-full transition-all duration-300 ease-in-out
+}
+
+.expand-cart .cart-container{
+  @apply w-full max-w-screen-lg mx-auto
+}
+
+.show-cart {
+  @apply transform translate-x-0;
+}
+
+.expand-cart {
+  @apply transform translate-x-0 w-full;
+}
+
+.expand-cart .line-items {
+  @apply bg-gray-100 rounded-md border-2 border-gray-200 w-1/3 p-4
+}
+
+.expand-cart .cart-reset, .expand-cart .line-item-quantity, .expand-cart .line-item-remove{
+ @apply hidden
+}
+
+.expand-cart .line-item {
+  @apply bg-gray-100
+}
+
+.show-shipping .address {
+  @apply flex-auto mr-12 block
+}
+
+.show-payment .payment {
+  @apply flex-auto mr-12 block
+}
