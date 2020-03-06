@@ -1,6 +1,6 @@
 import { writable } from "svelte/store";
 
-export const cartStatus = writable("expandCart");
+export const cartStatus = writable("");
 // return {
 //   subscribe,
 //   setStatus: () => {

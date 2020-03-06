@@ -20081,7 +20081,7 @@ var app = (function () {
     	}
     }
 
-    const cartStatus$1 = writable("expandCart");
+    const cartStatus$1 = writable("");
     // return {
     //   subscribe,
     //   setStatus: () => {
@@ -20128,6 +20128,29 @@ var app = (function () {
                     t[p[i]] = s[p[i]];
             }
         return t;
+    }
+    function fade(node, { delay = 0, duration = 400, easing = identity }) {
+        const o = +getComputedStyle(node).opacity;
+        return {
+            delay,
+            duration,
+            easing,
+            css: t => `opacity: ${t * o}`
+        };
+    }
+    function fly(node, { delay = 0, duration = 400, easing = cubicOut, x = 0, y = 0, opacity = 0 }) {
+        const style = getComputedStyle(node);
+        const target_opacity = +style.opacity;
+        const transform = style.transform === 'none' ? '' : style.transform;
+        const od = target_opacity * (1 - opacity);
+        return {
+            delay,
+            duration,
+            easing,
+            css: (t, u) => `
+			transform: ${transform} translate(${(1 - t) * x}px, ${(1 - t) * y}px);
+			opacity: ${target_opacity - (od * u)}`
+        };
     }
     function crossfade(_a) {
         var { fallback } = _a, defaults = __rest(_a, ["fallback"]);
@@ -20538,13 +20561,526 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (176:8) {#if $cart.length > 0}
-    function create_if_block_4(ctx) {
+    // (89:0) {#if $cartStatus != 'showConfirmation'}
+    function create_if_block_5(ctx) {
+    	let div3;
+    	let div2;
+    	let current_block_type_index;
+    	let if_block0;
+    	let t0;
+    	let div1;
+    	let ul;
+    	let t1;
+    	let div0;
+    	let h3;
+    	let t3;
+    	let span;
+    	let div3_intro;
+    	let div3_outro;
+    	let current;
+    	const if_block_creators = [create_if_block_7, create_if_block_8];
+    	const if_blocks = [];
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*$cartStatus*/ ctx[1] == "expandCart") return 0;
+    		if (/*$cartStatus*/ ctx[1] == "showPayment") return 1;
+    		return -1;
+    	}
+
+    	if (~(current_block_type_index = select_block_type(ctx))) {
+    		if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	}
+
+    	let if_block1 = /*$cart*/ ctx[2].length > 0 && create_if_block_6(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div3 = element("div");
+    			div2 = element("div");
+    			if (if_block0) if_block0.c();
+    			t0 = space();
+    			div1 = element("div");
+    			ul = element("ul");
+    			if (if_block1) if_block1.c();
+    			t1 = space();
+    			div0 = element("div");
+    			h3 = element("h3");
+    			h3.textContent = "Total";
+    			t3 = space();
+    			span = element("span");
+    			span.textContent = "Cart total";
+    			add_location(ul, file$2, 178, 8, 5598);
+    			attr_dev(h3, "class", "flex-auto self-center uppercase font-bold");
+    			add_location(h3, file$2, 194, 10, 6069);
+    			attr_dev(span, "class", "text-2xl text-green-600");
+    			add_location(span, file$2, 195, 10, 6144);
+    			attr_dev(div0, "class", "flex w-full");
+    			add_location(div0, file$2, 193, 8, 6033);
+    			attr_dev(div1, "class", "line-items w-full self-start");
+    			add_location(div1, file$2, 177, 6, 5547);
+    			attr_dev(div2, "class", "step-container flex");
+    			add_location(div2, file$2, 94, 4, 2355);
+    			attr_dev(div3, "class", "cart-container flex-auto p-4");
+    			add_location(div3, file$2, 89, 2, 2251);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div3, anchor);
+    			append_dev(div3, div2);
+
+    			if (~current_block_type_index) {
+    				if_blocks[current_block_type_index].m(div2, null);
+    			}
+
+    			append_dev(div2, t0);
+    			append_dev(div2, div1);
+    			append_dev(div1, ul);
+    			if (if_block1) if_block1.m(ul, null);
+    			append_dev(div1, t1);
+    			append_dev(div1, div0);
+    			append_dev(div0, h3);
+    			append_dev(div0, t3);
+    			append_dev(div0, span);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
+
+    			if (current_block_type_index !== previous_block_index) {
+    				if (if_block0) {
+    					group_outros();
+
+    					transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    						if_blocks[previous_block_index] = null;
+    					});
+
+    					check_outros();
+    				}
+
+    				if (~current_block_type_index) {
+    					if_block0 = if_blocks[current_block_type_index];
+
+    					if (!if_block0) {
+    						if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    						if_block0.c();
+    					}
+
+    					transition_in(if_block0, 1);
+    					if_block0.m(div2, t0);
+    				} else {
+    					if_block0 = null;
+    				}
+    			}
+
+    			if (/*$cart*/ ctx[2].length > 0) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    					transition_in(if_block1, 1);
+    				} else {
+    					if_block1 = create_if_block_6(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(ul, null);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+
+    			add_render_callback(() => {
+    				if (div3_outro) div3_outro.end(1);
+    				if (!div3_intro) div3_intro = create_in_transition(div3, fly, { y: 80, duration: 1100 });
+    				div3_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			if (div3_intro) div3_intro.invalidate();
+    			div3_outro = create_out_transition(div3, fade, {});
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div3);
+
+    			if (~current_block_type_index) {
+    				if_blocks[current_block_type_index].d();
+    			}
+
+    			if (if_block1) if_block1.d();
+    			if (detaching && div3_outro) div3_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_5.name,
+    		type: "if",
+    		source: "(89:0) {#if $cartStatus != 'showConfirmation'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (139:45) 
+    function create_if_block_8(ctx) {
+    	let div4;
+    	let label0;
+    	let t1;
+    	let input0;
+    	let t2;
+    	let div3;
+    	let div0;
+    	let label1;
+    	let t4;
+    	let input1;
+    	let t5;
+    	let div1;
+    	let label2;
+    	let t7;
+    	let input2;
+    	let t8;
+    	let div2;
+    	let label3;
+    	let t10;
+    	let input3;
+    	let div4_intro;
+    	let div4_outro;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div4 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Card Number";
+    			t1 = space();
+    			input0 = element("input");
+    			t2 = space();
+    			div3 = element("div");
+    			div0 = element("div");
+    			label1 = element("label");
+    			label1.textContent = "CVV";
+    			t4 = space();
+    			input1 = element("input");
+    			t5 = space();
+    			div1 = element("div");
+    			label2 = element("label");
+    			label2.textContent = "Expiry";
+    			t7 = space();
+    			input2 = element("input");
+    			t8 = space();
+    			div2 = element("div");
+    			label3 = element("label");
+    			label3.textContent = "Name on Card";
+    			t10 = space();
+    			input3 = element("input");
+    			attr_dev(label0, "class", "address-label");
+    			attr_dev(label0, "for", "card-number");
+    			add_location(label0, file$2, 143, 10, 4315);
+    			attr_dev(input0, "type", "text");
+    			attr_dev(input0, "id", "card-number");
+    			attr_dev(input0, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input0, file$2, 144, 10, 4392);
+    			attr_dev(label1, "class", "address-label");
+    			attr_dev(label1, "for", "cvv");
+    			add_location(label1, file$2, 150, 14, 4604);
+    			attr_dev(input1, "type", "text");
+    			attr_dev(input1, "id", "cvv");
+    			attr_dev(input1, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input1, file$2, 151, 14, 4669);
+    			attr_dev(div0, "class", "mr-8");
+    			add_location(div0, file$2, 149, 12, 4571);
+    			attr_dev(label2, "class", "address-label");
+    			attr_dev(label2, "for", "expiry");
+    			add_location(label2, file$2, 157, 14, 4875);
+    			attr_dev(input2, "type", "date");
+    			attr_dev(input2, "id", "expiry");
+    			attr_dev(input2, "class", "address-input flex-auto focus:outline-none\n                focus:border-blue-500");
+    			add_location(input2, file$2, 158, 14, 4946);
+    			attr_dev(div1, "class", "mr-8");
+    			add_location(div1, file$2, 156, 12, 4842);
+    			attr_dev(label3, "class", "address-label");
+    			attr_dev(label3, "for", "name-on-card");
+    			add_location(label3, file$2, 165, 14, 5186);
+    			attr_dev(input3, "type", "text");
+    			attr_dev(input3, "id", "name-on-card");
+    			attr_dev(input3, "class", "address-input flex-auto focus:outline-none\n                focus:border-blue-500");
+    			add_location(input3, file$2, 168, 14, 5301);
+    			attr_dev(div2, "class", "flex-auto");
+    			add_location(div2, file$2, 164, 12, 5148);
+    			attr_dev(div3, "class", "flex");
+    			add_location(div3, file$2, 148, 10, 4540);
+    			attr_dev(div4, "class", "flex-auto pr-16");
+    			add_location(div4, file$2, 139, 8, 4170);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, label0);
+    			append_dev(div4, t1);
+    			append_dev(div4, input0);
+    			append_dev(div4, t2);
+    			append_dev(div4, div3);
+    			append_dev(div3, div0);
+    			append_dev(div0, label1);
+    			append_dev(div0, t4);
+    			append_dev(div0, input1);
+    			append_dev(div3, t5);
+    			append_dev(div3, div1);
+    			append_dev(div1, label2);
+    			append_dev(div1, t7);
+    			append_dev(div1, input2);
+    			append_dev(div3, t8);
+    			append_dev(div3, div2);
+    			append_dev(div2, label3);
+    			append_dev(div2, t10);
+    			append_dev(div2, input3);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (div4_outro) div4_outro.end(1);
+    				if (!div4_intro) div4_intro = create_in_transition(div4, fly, { y: 80, duration: 500, delay: 600 });
+    				div4_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (div4_intro) div4_intro.invalidate();
+    			div4_outro = create_out_transition(div4, fade, { duration: 200 });
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div4);
+    			if (detaching && div4_outro) div4_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_8.name,
+    		type: "if",
+    		source: "(139:45) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (96:6) {#if $cartStatus == 'expandCart'}
+    function create_if_block_7(ctx) {
+    	let div1;
+    	let div0;
+    	let label0;
+    	let t1;
+    	let input0;
+    	let t2;
+    	let label1;
+    	let t4;
+    	let input1;
+    	let t5;
+    	let label2;
+    	let t7;
+    	let input2;
+    	let t8;
+    	let label3;
+    	let t10;
+    	let input3;
+    	let t11;
+    	let label4;
+    	let t13;
+    	let input4;
+    	let t14;
+    	let label5;
+    	let t16;
+    	let input5;
+    	let t17;
+    	let label6;
+    	let t19;
+    	let input6;
+    	let div1_intro;
+    	let div1_outro;
+    	let current;
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Email";
+    			t1 = space();
+    			input0 = element("input");
+    			t2 = space();
+    			label1 = element("label");
+    			label1.textContent = "Phone";
+    			t4 = space();
+    			input1 = element("input");
+    			t5 = space();
+    			label2 = element("label");
+    			label2.textContent = "Name";
+    			t7 = space();
+    			input2 = element("input");
+    			t8 = space();
+    			label3 = element("label");
+    			label3.textContent = "Zip";
+    			t10 = space();
+    			input3 = element("input");
+    			t11 = space();
+    			label4 = element("label");
+    			label4.textContent = "City";
+    			t13 = space();
+    			input4 = element("input");
+    			t14 = space();
+    			label5 = element("label");
+    			label5.textContent = "State";
+    			t16 = space();
+    			input5 = element("input");
+    			t17 = space();
+    			label6 = element("label");
+    			label6.textContent = "Address";
+    			t19 = space();
+    			input6 = element("input");
+    			attr_dev(label0, "class", "address-label");
+    			attr_dev(label0, "for", "email");
+    			add_location(label0, file$2, 101, 12, 2643);
+    			attr_dev(input0, "type", "text");
+    			attr_dev(input0, "id", "email");
+    			attr_dev(input0, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input0, file$2, 102, 12, 2710);
+    			attr_dev(div0, "class", "pb-2 mb-2 border-b border-gray-400");
+    			add_location(div0, file$2, 100, 10, 2582);
+    			attr_dev(label1, "class", "address-label");
+    			attr_dev(label1, "for", "phone");
+    			add_location(label1, file$2, 107, 10, 2875);
+    			attr_dev(input1, "type", "text");
+    			attr_dev(input1, "id", "phone");
+    			attr_dev(input1, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input1, file$2, 108, 10, 2940);
+    			attr_dev(label2, "class", "address-label");
+    			attr_dev(label2, "for", "name");
+    			add_location(label2, file$2, 112, 10, 3082);
+    			attr_dev(input2, "type", "text");
+    			attr_dev(input2, "id", "name");
+    			attr_dev(input2, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input2, file$2, 113, 10, 3145);
+    			attr_dev(label3, "class", "address-label");
+    			attr_dev(label3, "for", "zip");
+    			add_location(label3, file$2, 117, 10, 3286);
+    			attr_dev(input3, "type", "text");
+    			attr_dev(input3, "id", "zip");
+    			attr_dev(input3, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input3, file$2, 118, 10, 3347);
+    			attr_dev(label4, "class", "address-label");
+    			attr_dev(label4, "for", "city");
+    			add_location(label4, file$2, 122, 10, 3487);
+    			attr_dev(input4, "type", "text");
+    			attr_dev(input4, "id", "city");
+    			attr_dev(input4, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input4, file$2, 123, 10, 3550);
+    			attr_dev(label5, "class", "address-label");
+    			attr_dev(label5, "for", "state");
+    			add_location(label5, file$2, 127, 10, 3691);
+    			attr_dev(input5, "type", "text");
+    			attr_dev(input5, "id", "state");
+    			attr_dev(input5, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input5, file$2, 128, 10, 3756);
+    			attr_dev(label6, "class", "address-label");
+    			attr_dev(label6, "for", "address");
+    			add_location(label6, file$2, 132, 10, 3898);
+    			attr_dev(input6, "type", "text");
+    			attr_dev(input6, "id", "address");
+    			attr_dev(input6, "class", "address-input focus:outline-none focus:border-blue-500");
+    			add_location(input6, file$2, 133, 10, 3967);
+    			attr_dev(div1, "class", "flex-auto pr-16");
+    			add_location(div1, file$2, 96, 8, 2437);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			append_dev(div0, label0);
+    			append_dev(div0, t1);
+    			append_dev(div0, input0);
+    			append_dev(div1, t2);
+    			append_dev(div1, label1);
+    			append_dev(div1, t4);
+    			append_dev(div1, input1);
+    			append_dev(div1, t5);
+    			append_dev(div1, label2);
+    			append_dev(div1, t7);
+    			append_dev(div1, input2);
+    			append_dev(div1, t8);
+    			append_dev(div1, label3);
+    			append_dev(div1, t10);
+    			append_dev(div1, input3);
+    			append_dev(div1, t11);
+    			append_dev(div1, label4);
+    			append_dev(div1, t13);
+    			append_dev(div1, input4);
+    			append_dev(div1, t14);
+    			append_dev(div1, label5);
+    			append_dev(div1, t16);
+    			append_dev(div1, input5);
+    			append_dev(div1, t17);
+    			append_dev(div1, label6);
+    			append_dev(div1, t19);
+    			append_dev(div1, input6);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			add_render_callback(() => {
+    				if (div1_outro) div1_outro.end(1);
+    				if (!div1_intro) div1_intro = create_in_transition(div1, fly, { y: 80, duration: 500, delay: 300 });
+    				div1_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			if (div1_intro) div1_intro.invalidate();
+    			div1_outro = create_out_transition(div1, fade, { duration: 200 });
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if (detaching && div1_outro) div1_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_7.name,
+    		type: "if",
+    		source: "(96:6) {#if $cartStatus == 'expandCart'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (180:10) {#if $cart.length > 0}
+    function create_if_block_6(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
-    	let each_value_1 = /*$cart*/ ctx[1];
+    	let each_value_1 = /*$cart*/ ctx[2];
     	validate_each_argument(each_value_1);
     	const get_key = ctx => /*product*/ ctx[11].id;
     	validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
@@ -20572,8 +21108,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$cart*/ 2) {
-    				const each_value_1 = /*$cart*/ ctx[1];
+    			if (dirty & /*$cart*/ 4) {
+    				const each_value_1 = /*$cart*/ ctx[2];
     				validate_each_argument(each_value_1);
     				group_outros();
     				validate_each_keys(ctx, each_value_1, get_each_context_1, get_key);
@@ -20608,16 +21144,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4.name,
+    		id: create_if_block_6.name,
     		type: "if",
-    		source: "(176:8) {#if $cart.length > 0}",
+    		source: "(180:10) {#if $cart.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (177:10) {#each $cart as { product, quantity, total }
+    // (181:12) {#each $cart as { product, quantity, total }
     function create_each_block_1(key_1, ctx) {
     	let li;
     	let t;
@@ -20641,8 +21177,8 @@ var app = (function () {
     			li = element("li");
     			create_component(cartitem.$$.fragment);
     			t = space();
-    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n              border-gray-200");
-    			add_location(li, file$2, 177, 12, 5409);
+    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n                border-gray-200");
+    			add_location(li, file$2, 181, 14, 5721);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -20653,9 +21189,9 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const cartitem_changes = {};
-    			if (dirty & /*$cart*/ 2) cartitem_changes.product = /*product*/ ctx[11];
-    			if (dirty & /*$cart*/ 2) cartitem_changes.quantity = /*quantity*/ ctx[12];
-    			if (dirty & /*$cart*/ 2) cartitem_changes.total = /*total*/ ctx[13];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.product = /*product*/ ctx[11];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.quantity = /*quantity*/ ctx[12];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.total = /*total*/ ctx[13];
     			cartitem.$set(cartitem_changes);
     		},
     		i: function intro(local) {
@@ -20693,20 +21229,157 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(177:10) {#each $cart as { product, quantity, total }",
+    		source: "(181:12) {#each $cart as { product, quantity, total }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (206:8) {#if $cart.length > 0}
+    // (202:0) {#if $cartStatus == 'showConfirmation'}
     function create_if_block_3(ctx) {
+    	let div4;
+    	let div0;
+    	let h30;
+    	let t1;
+    	let p;
+    	let t3;
+    	let div3;
+    	let div2;
+    	let ul;
+    	let t4;
+    	let div1;
+    	let h31;
+    	let t6;
+    	let span;
+    	let div4_intro;
+    	let div4_outro;
+    	let current;
+    	let if_block = /*$cart*/ ctx[2].length > 0 && create_if_block_4(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div4 = element("div");
+    			div0 = element("div");
+    			h30 = element("h3");
+    			h30.textContent = "Your order has been confirmed";
+    			t1 = space();
+    			p = element("p");
+    			p.textContent = "R37542347";
+    			t3 = space();
+    			div3 = element("div");
+    			div2 = element("div");
+    			ul = element("ul");
+    			if (if_block) if_block.c();
+    			t4 = space();
+    			div1 = element("div");
+    			h31 = element("h3");
+    			h31.textContent = "Total";
+    			t6 = space();
+    			span = element("span");
+    			span.textContent = "Cart total";
+    			attr_dev(h30, "class", "text-2xl font-bold");
+    			add_location(h30, file$2, 207, 6, 6451);
+    			attr_dev(p, "class", "font-bold");
+    			add_location(p, file$2, 208, 6, 6523);
+    			attr_dev(div0, "class", "mb-12 text-center");
+    			add_location(div0, file$2, 206, 4, 6413);
+    			add_location(ul, file$2, 212, 8, 6660);
+    			attr_dev(h31, "class", "flex-auto self-center uppercase font-bold");
+    			add_location(h31, file$2, 228, 10, 7131);
+    			attr_dev(span, "class", "text-2xl text-green-600");
+    			add_location(span, file$2, 229, 10, 7206);
+    			attr_dev(div1, "class", "flex w-full");
+    			add_location(div1, file$2, 227, 8, 7095);
+    			attr_dev(div2, "class", "line-items mx-auto w-full self-start");
+    			add_location(div2, file$2, 211, 6, 6601);
+    			attr_dev(div3, "class", "mx-auto");
+    			add_location(div3, file$2, 210, 4, 6573);
+    			attr_dev(div4, "class", "confirmation-container pt-24 flex-auto p-4");
+    			add_location(div4, file$2, 202, 2, 6296);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div4, anchor);
+    			append_dev(div4, div0);
+    			append_dev(div0, h30);
+    			append_dev(div0, t1);
+    			append_dev(div0, p);
+    			append_dev(div4, t3);
+    			append_dev(div4, div3);
+    			append_dev(div3, div2);
+    			append_dev(div2, ul);
+    			if (if_block) if_block.m(ul, null);
+    			append_dev(div2, t4);
+    			append_dev(div2, div1);
+    			append_dev(div1, h31);
+    			append_dev(div1, t6);
+    			append_dev(div1, span);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*$cart*/ ctx[2].length > 0) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    					transition_in(if_block, 1);
+    				} else {
+    					if_block = create_if_block_4(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(ul, null);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+
+    			add_render_callback(() => {
+    				if (div4_outro) div4_outro.end(1);
+    				if (!div4_intro) div4_intro = create_in_transition(div4, fly, { y: 80, duration: 1100 });
+    				div4_intro.start();
+    			});
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			if (div4_intro) div4_intro.invalidate();
+    			div4_outro = create_out_transition(div4, fade, {});
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div4);
+    			if (if_block) if_block.d();
+    			if (detaching && div4_outro) div4_outro.end();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(202:0) {#if $cartStatus == 'showConfirmation'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (214:10) {#if $cart.length > 0}
+    function create_if_block_4(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
-    	let each_value = /*$cart*/ ctx[1];
+    	let each_value = /*$cart*/ ctx[2];
     	validate_each_argument(each_value);
     	const get_key = ctx => /*product*/ ctx[11].id;
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -20734,8 +21407,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$cart*/ 2) {
-    				const each_value = /*$cart*/ ctx[1];
+    			if (dirty & /*$cart*/ 4) {
+    				const each_value = /*$cart*/ ctx[2];
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -20770,16 +21443,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3.name,
+    		id: create_if_block_4.name,
     		type: "if",
-    		source: "(206:8) {#if $cart.length > 0}",
+    		source: "(214:10) {#if $cart.length > 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (207:10) {#each $cart as { product, quantity, total }
+    // (215:12) {#each $cart as { product, quantity, total }
     function create_each_block(key_1, ctx) {
     	let li;
     	let t;
@@ -20803,8 +21476,8 @@ var app = (function () {
     			li = element("li");
     			create_component(cartitem.$$.fragment);
     			t = space();
-    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n              border-gray-200");
-    			add_location(li, file$2, 207, 12, 6323);
+    			attr_dev(li, "class", "line-item flex py-2 w-full self-start border-b-2\n                border-gray-200");
+    			add_location(li, file$2, 215, 14, 6783);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -20815,9 +21488,9 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const cartitem_changes = {};
-    			if (dirty & /*$cart*/ 2) cartitem_changes.product = /*product*/ ctx[11];
-    			if (dirty & /*$cart*/ 2) cartitem_changes.quantity = /*quantity*/ ctx[12];
-    			if (dirty & /*$cart*/ 2) cartitem_changes.total = /*total*/ ctx[13];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.product = /*product*/ ctx[11];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.quantity = /*quantity*/ ctx[12];
+    			if (dirty & /*$cart*/ 4) cartitem_changes.total = /*total*/ ctx[13];
     			cartitem.$set(cartitem_changes);
     		},
     		i: function intro(local) {
@@ -20855,14 +21528,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(207:10) {#each $cart as { product, quantity, total }",
+    		source: "(215:12) {#each $cart as { product, quantity, total }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (242:44) 
+    // (250:39) 
     function create_if_block_2(ctx) {
     	let a;
     	let dispose;
@@ -20873,7 +21546,7 @@ var app = (function () {
     			a.textContent = "Checkout";
     			attr_dev(a, "href", "#");
     			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
-    			add_location(a, file$2, 242, 2, 7219);
+    			add_location(a, file$2, 250, 2, 7700);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -20890,14 +21563,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(242:44) ",
+    		source: "(250:39) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (235:39) 
+    // (243:38) 
     function create_if_block_1(ctx) {
     	let a;
     	let dispose;
@@ -20908,7 +21581,7 @@ var app = (function () {
     			a.textContent = "Checkout";
     			attr_dev(a, "href", "#");
     			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
-    			add_location(a, file$2, 235, 2, 7034);
+    			add_location(a, file$2, 243, 2, 7520);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -20925,14 +21598,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(235:39) ",
+    		source: "(243:38) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (228:0) {#if $cartStatus == 'expandCart'}
+    // (236:0) {#if $cartStatus == ''}
     function create_if_block$1(ctx) {
     	let a;
     	let dispose;
@@ -20943,7 +21616,7 @@ var app = (function () {
     			a.textContent = "Checkout";
     			attr_dev(a, "href", "#");
     			attr_dev(a, "class", "w-full bg-black text-white uppercase text-center p-4 self-end");
-    			add_location(a, file$2, 228, 2, 6855);
+    			add_location(a, file$2, 236, 2, 7342);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -20960,7 +21633,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(228:0) {#if $cartStatus == 'expandCart'}",
+    		source: "(236:0) {#if $cartStatus == ''}",
     		ctx
     	});
 
@@ -20973,101 +21646,27 @@ var app = (function () {
     	let t0;
     	let a0;
     	let t2;
-    	let div13;
     	let div2;
     	let h1;
     	let t3;
     	let t4;
     	let a1;
     	let t6;
-    	let div12;
-    	let div4;
-    	let div3;
-    	let label0;
+    	let t7;
     	let t8;
-    	let input0;
-    	let t9;
-    	let label1;
-    	let t11;
-    	let input1;
-    	let t12;
-    	let label2;
-    	let t14;
-    	let input2;
-    	let t15;
-    	let label3;
-    	let t17;
-    	let input3;
-    	let t18;
-    	let label4;
-    	let t20;
-    	let input4;
-    	let t21;
-    	let label5;
-    	let t23;
-    	let input5;
-    	let t24;
-    	let label6;
-    	let t26;
-    	let input6;
-    	let t27;
-    	let div9;
-    	let label7;
-    	let t29;
-    	let input7;
-    	let t30;
-    	let div8;
-    	let div5;
-    	let label8;
-    	let t32;
-    	let input8;
-    	let t33;
-    	let div6;
-    	let label9;
-    	let t35;
-    	let input9;
-    	let t36;
-    	let div7;
-    	let label10;
-    	let t38;
-    	let input10;
-    	let t39;
-    	let div11;
-    	let ul0;
-    	let t40;
-    	let div10;
-    	let h30;
-    	let t42;
-    	let span0;
-    	let t44;
-    	let div18;
-    	let div14;
-    	let h31;
-    	let t46;
-    	let p;
-    	let t48;
-    	let div17;
-    	let div16;
-    	let ul1;
-    	let t49;
-    	let div15;
-    	let h32;
-    	let t51;
-    	let span1;
-    	let t53;
     	let if_block2_anchor;
     	let current;
     	let dispose;
-    	let if_block0 = /*$cart*/ ctx[1].length > 0 && create_if_block_4(ctx);
-    	let if_block1 = /*$cart*/ ctx[1].length > 0 && create_if_block_3(ctx);
+    	let if_block0 = /*$cartStatus*/ ctx[1] != "showConfirmation" && create_if_block_5(ctx);
+    	let if_block1 = /*$cartStatus*/ ctx[1] == "showConfirmation" && create_if_block_3(ctx);
 
-    	function select_block_type(ctx, dirty) {
-    		if (/*$cartStatus*/ ctx[2] == "expandCart") return create_if_block$1;
-    		if (/*$cartStatus*/ ctx[2] == "showPayment") return create_if_block_1;
-    		if (/*$cartStatus*/ ctx[2] == "showConfirmation") return create_if_block_2;
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*$cartStatus*/ ctx[1] == "") return create_if_block$1;
+    		if (/*$cartStatus*/ ctx[1] == "expandCart") return create_if_block_1;
+    		if (/*$cartStatus*/ ctx[1] == "showPayment") return create_if_block_2;
     	}
 
-    	let current_block_type = select_block_type(ctx);
+    	let current_block_type = select_block_type_1(ctx);
     	let if_block2 = current_block_type && current_block_type(ctx);
 
     	const block = {
@@ -21078,7 +21677,6 @@ var app = (function () {
     			a0 = element("a");
     			a0.textContent = "Close";
     			t2 = space();
-    			div13 = element("div");
     			div2 = element("div");
     			h1 = element("h1");
     			t3 = text(/*cartText*/ ctx[0]);
@@ -21086,239 +21684,26 @@ var app = (function () {
     			a1 = element("a");
     			a1.textContent = "Reset";
     			t6 = space();
-    			div12 = element("div");
-    			div4 = element("div");
-    			div3 = element("div");
-    			label0 = element("label");
-    			label0.textContent = "Email";
-    			t8 = space();
-    			input0 = element("input");
-    			t9 = space();
-    			label1 = element("label");
-    			label1.textContent = "Phone";
-    			t11 = space();
-    			input1 = element("input");
-    			t12 = space();
-    			label2 = element("label");
-    			label2.textContent = "Name";
-    			t14 = space();
-    			input2 = element("input");
-    			t15 = space();
-    			label3 = element("label");
-    			label3.textContent = "Zip";
-    			t17 = space();
-    			input3 = element("input");
-    			t18 = space();
-    			label4 = element("label");
-    			label4.textContent = "City";
-    			t20 = space();
-    			input4 = element("input");
-    			t21 = space();
-    			label5 = element("label");
-    			label5.textContent = "State";
-    			t23 = space();
-    			input5 = element("input");
-    			t24 = space();
-    			label6 = element("label");
-    			label6.textContent = "Address";
-    			t26 = space();
-    			input6 = element("input");
-    			t27 = space();
-    			div9 = element("div");
-    			label7 = element("label");
-    			label7.textContent = "Card Number";
-    			t29 = space();
-    			input7 = element("input");
-    			t30 = space();
-    			div8 = element("div");
-    			div5 = element("div");
-    			label8 = element("label");
-    			label8.textContent = "CVV";
-    			t32 = space();
-    			input8 = element("input");
-    			t33 = space();
-    			div6 = element("div");
-    			label9 = element("label");
-    			label9.textContent = "Expiry";
-    			t35 = space();
-    			input9 = element("input");
-    			t36 = space();
-    			div7 = element("div");
-    			label10 = element("label");
-    			label10.textContent = "Name on Card";
-    			t38 = space();
-    			input10 = element("input");
-    			t39 = space();
-    			div11 = element("div");
-    			ul0 = element("ul");
     			if (if_block0) if_block0.c();
-    			t40 = space();
-    			div10 = element("div");
-    			h30 = element("h3");
-    			h30.textContent = "Total";
-    			t42 = space();
-    			span0 = element("span");
-    			span0.textContent = "Cart total";
-    			t44 = space();
-    			div18 = element("div");
-    			div14 = element("div");
-    			h31 = element("h3");
-    			h31.textContent = "Your order has been confirmed";
-    			t46 = space();
-    			p = element("p");
-    			p.textContent = "R37542347";
-    			t48 = space();
-    			div17 = element("div");
-    			div16 = element("div");
-    			ul1 = element("ul");
+    			t7 = space();
     			if (if_block1) if_block1.c();
-    			t49 = space();
-    			div15 = element("div");
-    			h32 = element("h3");
-    			h32.textContent = "Total";
-    			t51 = space();
-    			span1 = element("span");
-    			span1.textContent = "Cart total";
-    			t53 = space();
+    			t8 = space();
     			if (if_block2) if_block2.c();
     			if_block2_anchor = empty();
     			attr_dev(div0, "class", "flex-auto");
-    			add_location(div0, file$2, 92, 2, 2374);
+    			add_location(div0, file$2, 80, 2, 1957);
     			attr_dev(a0, "href", "#");
     			attr_dev(a0, "class", "hide-cart");
-    			add_location(a0, file$2, 93, 2, 2402);
+    			add_location(a0, file$2, 81, 2, 1985);
     			attr_dev(div1, "class", "flex w-full mt-4 px-4 ");
-    			add_location(div1, file$2, 91, 0, 2335);
+    			add_location(div1, file$2, 79, 0, 1918);
     			attr_dev(h1, "class", "flex-auto text-2xl font-black");
-    			add_location(h1, file$2, 98, 4, 2543);
+    			add_location(h1, file$2, 84, 2, 2078);
     			attr_dev(a1, "href", "#");
     			attr_dev(a1, "class", "cart-reset mt-2");
-    			add_location(a1, file$2, 99, 4, 2605);
+    			add_location(a1, file$2, 85, 2, 2138);
     			attr_dev(div2, "class", "flex py-4");
-    			add_location(div2, file$2, 97, 2, 2515);
-    			attr_dev(label0, "class", "address-label");
-    			attr_dev(label0, "for", "email");
-    			add_location(label0, file$2, 104, 8, 2809);
-    			attr_dev(input0, "type", "text");
-    			attr_dev(input0, "id", "email");
-    			attr_dev(input0, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input0, file$2, 105, 8, 2872);
-    			attr_dev(div3, "class", "pb-2 mb-2 border-b border-gray-400");
-    			add_location(div3, file$2, 103, 6, 2752);
-    			attr_dev(label1, "class", "address-label");
-    			attr_dev(label1, "for", "phone");
-    			add_location(label1, file$2, 110, 6, 3017);
-    			attr_dev(input1, "type", "text");
-    			attr_dev(input1, "id", "phone");
-    			attr_dev(input1, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input1, file$2, 111, 6, 3078);
-    			attr_dev(label2, "class", "address-label");
-    			attr_dev(label2, "for", "name");
-    			add_location(label2, file$2, 115, 6, 3204);
-    			attr_dev(input2, "type", "text");
-    			attr_dev(input2, "id", "name");
-    			attr_dev(input2, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input2, file$2, 116, 6, 3263);
-    			attr_dev(label3, "class", "address-label");
-    			attr_dev(label3, "for", "zip");
-    			add_location(label3, file$2, 120, 6, 3388);
-    			attr_dev(input3, "type", "text");
-    			attr_dev(input3, "id", "zip");
-    			attr_dev(input3, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input3, file$2, 121, 6, 3445);
-    			attr_dev(label4, "class", "address-label");
-    			attr_dev(label4, "for", "city");
-    			add_location(label4, file$2, 125, 6, 3569);
-    			attr_dev(input4, "type", "text");
-    			attr_dev(input4, "id", "city");
-    			attr_dev(input4, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input4, file$2, 126, 6, 3628);
-    			attr_dev(label5, "class", "address-label");
-    			attr_dev(label5, "for", "state");
-    			add_location(label5, file$2, 130, 6, 3753);
-    			attr_dev(input5, "type", "text");
-    			attr_dev(input5, "id", "state");
-    			attr_dev(input5, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input5, file$2, 131, 6, 3814);
-    			attr_dev(label6, "class", "address-label");
-    			attr_dev(label6, "for", "address");
-    			add_location(label6, file$2, 135, 6, 3940);
-    			attr_dev(input6, "type", "text");
-    			attr_dev(input6, "id", "address");
-    			attr_dev(input6, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input6, file$2, 136, 6, 4005);
-    			attr_dev(div4, "class", "address hidden");
-    			add_location(div4, file$2, 102, 4, 2717);
-    			attr_dev(label7, "class", "address-label");
-    			attr_dev(label7, "for", "card-number");
-    			add_location(label7, file$2, 142, 6, 4177);
-    			attr_dev(input7, "type", "text");
-    			attr_dev(input7, "id", "card-number");
-    			attr_dev(input7, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input7, file$2, 143, 6, 4250);
-    			attr_dev(label8, "class", "address-label");
-    			attr_dev(label8, "for", "cvv");
-    			add_location(label8, file$2, 149, 10, 4438);
-    			attr_dev(input8, "type", "text");
-    			attr_dev(input8, "id", "cvv");
-    			attr_dev(input8, "class", "address-input focus:outline-none focus:border-blue-500");
-    			add_location(input8, file$2, 150, 10, 4499);
-    			attr_dev(div5, "class", "mr-8");
-    			add_location(div5, file$2, 148, 8, 4409);
-    			attr_dev(label9, "class", "address-label");
-    			attr_dev(label9, "for", "expiry");
-    			add_location(label9, file$2, 156, 10, 4681);
-    			attr_dev(input9, "type", "date");
-    			attr_dev(input9, "id", "expiry");
-    			attr_dev(input9, "class", "address-input flex-auto focus:outline-none\n            focus:border-blue-500");
-    			add_location(input9, file$2, 157, 10, 4748);
-    			attr_dev(div6, "class", "mr-8");
-    			add_location(div6, file$2, 155, 8, 4652);
-    			attr_dev(label10, "class", "address-label");
-    			attr_dev(label10, "for", "name-on-card");
-    			add_location(label10, file$2, 164, 10, 4960);
-    			attr_dev(input10, "type", "text");
-    			attr_dev(input10, "id", "name-on-card");
-    			attr_dev(input10, "class", "address-input flex-auto focus:outline-none\n            focus:border-blue-500");
-    			add_location(input10, file$2, 165, 10, 5039);
-    			attr_dev(div7, "class", "flex-auto");
-    			add_location(div7, file$2, 163, 8, 4926);
-    			attr_dev(div8, "class", "flex");
-    			add_location(div8, file$2, 147, 6, 4382);
-    			attr_dev(div9, "class", "payment hidden");
-    			add_location(div9, file$2, 141, 4, 4142);
-    			add_location(ul0, file$2, 174, 6, 5292);
-    			attr_dev(h30, "class", "flex-auto self-center uppercase font-bold");
-    			add_location(h30, file$2, 190, 8, 5735);
-    			attr_dev(span0, "class", "text-2xl text-green-600");
-    			add_location(span0, file$2, 191, 8, 5808);
-    			attr_dev(div10, "class", "flex w-full");
-    			add_location(div10, file$2, 189, 6, 5701);
-    			attr_dev(div11, "class", "line-items w-full self-start");
-    			add_location(div11, file$2, 173, 4, 5243);
-    			attr_dev(div12, "class", "step-container flex");
-    			add_location(div12, file$2, 101, 2, 2679);
-    			attr_dev(div13, "class", "cart-container flex-auto p-4");
-    			add_location(div13, file$2, 96, 0, 2470);
-    			attr_dev(h31, "class", "text-2xl font-bold");
-    			add_location(h31, file$2, 199, 4, 6007);
-    			attr_dev(p, "class", "font-bold");
-    			add_location(p, file$2, 200, 4, 6077);
-    			attr_dev(div14, "class", "mb-12 text-center");
-    			add_location(div14, file$2, 198, 2, 5971);
-    			add_location(ul1, file$2, 204, 6, 6206);
-    			attr_dev(h32, "class", "flex-auto self-center uppercase font-bold");
-    			add_location(h32, file$2, 220, 8, 6649);
-    			attr_dev(span1, "class", "text-2xl text-green-600");
-    			add_location(span1, file$2, 221, 8, 6722);
-    			attr_dev(div15, "class", "flex w-full");
-    			add_location(div15, file$2, 219, 6, 6615);
-    			attr_dev(div16, "class", "line-items mx-auto w-full self-start");
-    			add_location(div16, file$2, 203, 4, 6149);
-    			attr_dev(div17, "class", "mx-auto");
-    			add_location(div17, file$2, 202, 2, 6123);
-    			attr_dev(div18, "class", "confirmation-container pt-24 flex-auto p-4 hidden");
-    			add_location(div18, file$2, 197, 0, 5905);
+    			add_location(div2, file$2, 83, 0, 2052);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -21329,90 +21714,16 @@ var app = (function () {
     			append_dev(div1, t0);
     			append_dev(div1, a0);
     			insert_dev(target, t2, anchor);
-    			insert_dev(target, div13, anchor);
-    			append_dev(div13, div2);
+    			insert_dev(target, div2, anchor);
     			append_dev(div2, h1);
     			append_dev(h1, t3);
     			append_dev(div2, t4);
     			append_dev(div2, a1);
-    			append_dev(div13, t6);
-    			append_dev(div13, div12);
-    			append_dev(div12, div4);
-    			append_dev(div4, div3);
-    			append_dev(div3, label0);
-    			append_dev(div3, t8);
-    			append_dev(div3, input0);
-    			append_dev(div4, t9);
-    			append_dev(div4, label1);
-    			append_dev(div4, t11);
-    			append_dev(div4, input1);
-    			append_dev(div4, t12);
-    			append_dev(div4, label2);
-    			append_dev(div4, t14);
-    			append_dev(div4, input2);
-    			append_dev(div4, t15);
-    			append_dev(div4, label3);
-    			append_dev(div4, t17);
-    			append_dev(div4, input3);
-    			append_dev(div4, t18);
-    			append_dev(div4, label4);
-    			append_dev(div4, t20);
-    			append_dev(div4, input4);
-    			append_dev(div4, t21);
-    			append_dev(div4, label5);
-    			append_dev(div4, t23);
-    			append_dev(div4, input5);
-    			append_dev(div4, t24);
-    			append_dev(div4, label6);
-    			append_dev(div4, t26);
-    			append_dev(div4, input6);
-    			append_dev(div12, t27);
-    			append_dev(div12, div9);
-    			append_dev(div9, label7);
-    			append_dev(div9, t29);
-    			append_dev(div9, input7);
-    			append_dev(div9, t30);
-    			append_dev(div9, div8);
-    			append_dev(div8, div5);
-    			append_dev(div5, label8);
-    			append_dev(div5, t32);
-    			append_dev(div5, input8);
-    			append_dev(div8, t33);
-    			append_dev(div8, div6);
-    			append_dev(div6, label9);
-    			append_dev(div6, t35);
-    			append_dev(div6, input9);
-    			append_dev(div8, t36);
-    			append_dev(div8, div7);
-    			append_dev(div7, label10);
-    			append_dev(div7, t38);
-    			append_dev(div7, input10);
-    			append_dev(div12, t39);
-    			append_dev(div12, div11);
-    			append_dev(div11, ul0);
-    			if (if_block0) if_block0.m(ul0, null);
-    			append_dev(div11, t40);
-    			append_dev(div11, div10);
-    			append_dev(div10, h30);
-    			append_dev(div10, t42);
-    			append_dev(div10, span0);
-    			insert_dev(target, t44, anchor);
-    			insert_dev(target, div18, anchor);
-    			append_dev(div18, div14);
-    			append_dev(div14, h31);
-    			append_dev(div14, t46);
-    			append_dev(div14, p);
-    			append_dev(div18, t48);
-    			append_dev(div18, div17);
-    			append_dev(div17, div16);
-    			append_dev(div16, ul1);
-    			if (if_block1) if_block1.m(ul1, null);
-    			append_dev(div16, t49);
-    			append_dev(div16, div15);
-    			append_dev(div15, h32);
-    			append_dev(div15, t51);
-    			append_dev(div15, span1);
-    			insert_dev(target, t53, anchor);
+    			insert_dev(target, t6, anchor);
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert_dev(target, t7, anchor);
+    			if (if_block1) if_block1.m(target, anchor);
+    			insert_dev(target, t8, anchor);
     			if (if_block2) if_block2.m(target, anchor);
     			insert_dev(target, if_block2_anchor, anchor);
     			current = true;
@@ -21425,15 +21736,15 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			if (!current || dirty & /*cartText*/ 1) set_data_dev(t3, /*cartText*/ ctx[0]);
 
-    			if (/*$cart*/ ctx[1].length > 0) {
+    			if (/*$cartStatus*/ ctx[1] != "showConfirmation") {
     				if (if_block0) {
     					if_block0.p(ctx, dirty);
     					transition_in(if_block0, 1);
     				} else {
-    					if_block0 = create_if_block_4(ctx);
+    					if_block0 = create_if_block_5(ctx);
     					if_block0.c();
     					transition_in(if_block0, 1);
-    					if_block0.m(ul0, null);
+    					if_block0.m(t7.parentNode, t7);
     				}
     			} else if (if_block0) {
     				group_outros();
@@ -21445,7 +21756,7 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (/*$cart*/ ctx[1].length > 0) {
+    			if (/*$cartStatus*/ ctx[1] == "showConfirmation") {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     					transition_in(if_block1, 1);
@@ -21453,7 +21764,7 @@ var app = (function () {
     					if_block1 = create_if_block_3(ctx);
     					if_block1.c();
     					transition_in(if_block1, 1);
-    					if_block1.m(ul1, null);
+    					if_block1.m(t8.parentNode, t8);
     				}
     			} else if (if_block1) {
     				group_outros();
@@ -21465,7 +21776,7 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block2) {
+    			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block2) {
     				if_block2.p(ctx, dirty);
     			} else {
     				if (if_block2) if_block2.d(1);
@@ -21491,12 +21802,12 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
     			if (detaching) detach_dev(t2);
-    			if (detaching) detach_dev(div13);
-    			if (if_block0) if_block0.d();
-    			if (detaching) detach_dev(t44);
-    			if (detaching) detach_dev(div18);
-    			if (if_block1) if_block1.d();
-    			if (detaching) detach_dev(t53);
+    			if (detaching) detach_dev(div2);
+    			if (detaching) detach_dev(t6);
+    			if (if_block0) if_block0.d(detaching);
+    			if (detaching) detach_dev(t7);
+    			if (if_block1) if_block1.d(detaching);
+    			if (detaching) detach_dev(t8);
 
     			if (if_block2) {
     				if_block2.d(detaching);
@@ -21523,12 +21834,12 @@ var app = (function () {
     }
 
     function instance$2($$self, $$props, $$invalidate) {
-    	let $cart;
     	let $cartStatus;
-    	validate_store(cart, "cart");
-    	component_subscribe($$self, cart, $$value => $$invalidate(1, $cart = $$value));
+    	let $cart;
     	validate_store(cartStatus$1, "cartStatus");
-    	component_subscribe($$self, cartStatus$1, $$value => $$invalidate(2, $cartStatus = $$value));
+    	component_subscribe($$self, cartStatus$1, $$value => $$invalidate(1, $cartStatus = $$value));
+    	validate_store(cart, "cart");
+    	component_subscribe($$self, cart, $$value => $$invalidate(2, $cart = $$value));
     	const cartContainer = document.getElementById("cart");
     	const mainContainer = document.querySelector("#main-container");
     	let cartText = "Cart";
@@ -21537,9 +21848,7 @@ var app = (function () {
     		cartContainer.classList.remove("show-cart", "expand-cart", "show-shipping", "show-payment", "show-confirmation");
     		mainContainer.classList.remove("-translate-x-64");
     		$$invalidate(0, cartText = "Cart");
-    		cartStatus$1.set("expandCart");
-    		cartContainer.querySelector(".cart-container").classList.remove("hidden");
-    		cartContainer.querySelector(".confirmation-container").classList.add("hidden");
+    		cartStatus$1.set("");
     	}
 
     	function expandCart() {
@@ -21547,21 +21856,19 @@ var app = (function () {
     		cartContainer.classList.add("expand-cart", "show-shipping");
     		mainContainer.classList.add("transition-all", "duration-500", "transform", "-translate-x-64");
     		$$invalidate(0, cartText = "Checking out as Guest");
-    		cartStatus$1.set("showPayment");
+    		cartStatus$1.set("expandCart");
     	}
 
     	function showPayment() {
     		$$invalidate(0, cartText = "Payment");
     		cartContainer.classList.remove("show-shipping");
     		cartContainer.classList.add("show-payment");
-    		cartStatus$1.set("showConfirmation");
+    		cartStatus$1.set("showPayment");
     	}
 
     	function showConfirmation() {
     		cartContainer.classList.remove("show-paymnent");
-    		cartContainer.querySelector(".cart-container").classList.add("hidden");
-    		cartContainer.querySelector(".confirmation-container").classList.remove("hidden");
-    		cartStatus$1.set("");
+    		cartStatus$1.set("showConfirmation");
     	}
 
     	const [send, receive] = crossfade({
@@ -21588,6 +21895,8 @@ var app = (function () {
     		cartStatus: cartStatus$1,
     		CartItem,
     		crossfade,
+    		fade,
+    		fly,
     		flip,
     		quintOut,
     		cartContainer,
@@ -21603,8 +21912,8 @@ var app = (function () {
     		document,
     		Math,
     		getComputedStyle,
-    		$cart,
-    		$cartStatus
+    		$cartStatus,
+    		$cart
     	});
 
     	$$self.$inject_state = $$props => {
@@ -21617,8 +21926,8 @@ var app = (function () {
 
     	return [
     		cartText,
-    		$cart,
     		$cartStatus,
+    		$cart,
     		hideCart,
     		expandCart,
     		showPayment,
