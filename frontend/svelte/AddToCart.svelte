@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { cart, isCartRestored } from "./stores.js";
+  import { cart, isCartRestored } from "./stores/cart.js";
   export let product;
 
   function addToCart() {

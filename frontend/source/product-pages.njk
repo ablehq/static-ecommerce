@@ -6,29 +6,34 @@ pagination:
   alias: product
 permalink: "products/{{product.attributes.slug}}/index.html"
 ---
-<div class="" id="header"></div>
-<div class="max-h-screen overflow-hidden flex">
-  <div class="w-1/2 h-screen overflow-hidden">
-    <img src="/assets/{{product.type + product.id}}.jpg" alt="" class="h-screen max-w-none"/>
+<div class=" overflow-hidden relative">
+  <div id="main-container" class=" flex flex-col max-h-screen min-h-screen h-screen">
+    <div class="" id="header"></div>
+    <div class=" flex">
+      <div class="w-1/2 h-screen overflow-hidden">
+        <img src="/assets/{{product.type + product.id}}.jpg" alt="" class="h-screen max-w-none"/>
+      </div>
+      <div
+            class="w-1/2 pt-24 px-12 product"
+            data-id="{{product.id}}"
+            data-name="{{product.attributes.name }}"
+            data-price="{{product.attributes.price }}"
+            data-image="/assets/{{product.type + product.id}}.jpg"
+          >
+        <h1 class="text-6xl font-black mb-4">
+          {{product.attributes.name}}
+        </h1>
+        <h4 class="text-small font-bold uppercase opacity-50 mb-2">
+              Description
+            </h4>
+        <p class="text-xl mb-4">{{product.attributes.meta_description}}</p>
+        <div class="product-info"></div>
+      </div>
+      
+    </div>
   </div>
   <div
-        class="w-1/2 pt-24 px-12 product"
-        data-id="{{product.id}}"
-        data-name="{{product.attributes.name }}"
-        data-price="{{product.attributes.price }}"
-        data-image="/assets/{{product.type + product.id}}.jpg"
-      >
-    <h1 class="text-6xl font-black mb-4">
-      {{product.attributes.name}}
-    </h1>
-    <h4 class="text-small font-bold uppercase opacity-50 mb-2">
-          Description
-        </h4>
-    <p class="text-xl mb-4">{{product.attributes.meta_description}}</p>
-    <div class="product-info"></div>
-  </div>
-  <div
-        id="cart"
-        class="flex flex-col flex-wrap absolute top-0 right-0 bottom-0 bg-white w-1/3"
-      ></div>
+    id="cart"
+    class="cart"
+  ></div>
 </div>

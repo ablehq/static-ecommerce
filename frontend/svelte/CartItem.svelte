@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import { cart } from "./stores.js";
+  import { cart } from "./stores/cart.js";
 
   import { crossfade } from "svelte/transition";
   import { flip } from "svelte/animate";
@@ -9,6 +9,7 @@
   export let product;
   export let quantity;
   export let total;
+
   function removeFromCart() {
     cart.removeProduct(product);
   }
@@ -46,23 +47,31 @@
   <div class="w-full">
     <div class="flex">
       <p class="flex-auto text-lg leading-none">{product.name}</p>
-      <div class="line-item-quantity">
-        <p class="text-sm opacity-50">
-          <a href="#" on:click={decrement}>-</a>
-          {quantity}
-          <a href="#" on:click={increment}>+</a>
-        </p>
-      </div>
+      <div class="line-item-quantity" />
       <div class="ml-4 line-item-remove">
-        <a href="#" on:click={removeFromCart}>Remove</a>
+        <a href="#" on:click={removeFromCart} class="text-red-300">Remove</a>
       </div>
     </div>
     <div class="flex block">
-      <div class="flex-auto text-sm italic">
-        Rs. {product.price} *
-        <span>{quantity}</span>
-      </div>
-      <p class="font-bold">Rs. {total}</p>
+      <div class="mr-4 text-sm italic">Rs. {product.price} * {quantity}</div>
+      <p class="text-sm opacity-50 line-item-remove">
+        <a
+          href="#"
+          on:click={decrement}
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2
+          rounded-full">
+          -
+        </a>
+        <span class="px-2">{quantity}</span>
+        <a
+          href="#"
+          on:click={increment}
+          class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-1 px-2
+          rounded-full">
+          +
+        </a>
+      </p>
+      <p class="text-right flex-auto font-bold">Rs. {total}</p>
     </div>
   </div>
 </div>
