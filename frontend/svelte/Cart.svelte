@@ -1,5 +1,5 @@
 <script>
-  import { cart, isCartRestored } from "./stores/cart.js";
+  import { displayCart as cart, isCartRestored } from "./stores/cart.js";
   import { cartStatus } from "./cartState.js";
   import CartItem from "./CartItem.svelte";
   import ShippingDetails from "./ShippingDetails.svelte";
@@ -8,8 +8,6 @@
 
   import { flip } from "svelte/animate";
   import { quintOut } from "svelte/easing";
-
-  import axios from "axios";
 
   const cartContainer = document.getElementById("cart");
   const mainContainer = document.querySelector("#main-container");

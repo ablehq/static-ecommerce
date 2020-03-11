@@ -1,20 +1,8 @@
 import { writable, derived } from "svelte/store";
-import axios from "axios";
-import Cookies from "js-cookie";
-import low from "lowdb";
-import LocalStorage from "lowdb/adapters/LocalStorage";
-
-const adapter = new LocalStorage("db");
-const db = low(adapter);
-
-db.defaults({ cart: [] }).write();
-
-function getOrderToken() {
-  return Cookies.get("orderToken");
-}
+import { cart as cartApi } from "../api"
 
 function createCartStatus() {
-  const { subscribe, set, update } = writable({
+  const { subscribe, set } = writable({
     status: "unknown"
   });
   return {
@@ -23,149 +11,79 @@ function createCartStatus() {
       set({
         status: "in-progress"
       });
-      const value = db.get("cart").value();
-      let orderTokenProm = new Promise(resolve => {
-        return resolve(getOrderToken());
-      });
-      orderTokenProm
-        .then(token => {
-          if (token) {
-            return token;
-          } else {
-            return axios
-              .post("http://localhost:3000/api/v2/storefront/cart", {})
-              .then(response => {
-                const orderToken = response.data.data.attributes.token;
-                Cookies.set("orderToken", orderToken);
-                return orderToken;
-              });
-          }
-        })
-        .then(token => {
-          axios
-            .get(
-              "http://localhost:3000/api/v2/storefront/cart?include=line_items%2Cvariants%2Cvariants.images",
-              {
-                headers: {
-                  "X-Spree-Order-Token": token
-                }
-              }
-            )
-            .then(function(response) {
-              const respCart = response.data;
-              const resp = respCart.included
-                .filter(it => it.type === "line_item")
-                .map(it => ({
-                  quantity: it.attributes.quantity,
-                  total: it.attributes.display_total,
-                  line_item_id: it.id,
-                  product: {
-                    id: it.relationships.variant.data.id,
-                    name: it.attributes.name,
-                    price: it.attributes.display_price,
-                    image:
-                      "http://localhost:3000/" +
-                      respCart.included.find(
-                        item =>
-                          item.type === "image" &&
-                          item.attributes.viewable_id.toString() ===
-                            it.relationships.variant.data.id
-                      ).attributes.styles[0].url
-                  }
-                }));
-              set({
-                status: "restored"
-              });
-              const value = db.get("cart").value();
-              console.log(resp);
-              cart.restore(resp);
-              return cart;
-            })
-            .catch(function(error) {
-              console.log(error);
-            });
-        });
-      setTimeout(() => {
-        set({
-          status: "restored"
-        });
-        cart.restore(value);
-      }, 1500);
+      cartApi.fetch().then(val => {
+        setTimeout(() => {
+          set({
+            status: "restored"
+          });
+          console.log("Restored:", val)
+          cart.restore(val);
+        }, 1500);
+      })
     }
   };
 }
 
-const saveCart = cart => {
-  db.set("cart", cart).write();
-  return cart;
-};
-
 function createCart() {
-  const { subscribe, set, update } = writable([]);
+  const { subscribe, set, update } = writable({});
   return {
     subscribe,
     addProduct: product => {
+      const productId = `${product.id}`
       update(prevCart => {
-        const index = prevCart.findIndex(
-          item => item.product.id === product.id
-        );
-        if (index < 0) {
-          prevCart.unshift({
-            product,
-            quantity: 1,
-            total: Number.parseInt(product.price)
-          });
+        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        if (existing) {
+          // set quantity
+          cartApi.setQuantity(existing.id, existing.attributes.quantity + 1).then(cart => set(cart))
         } else {
-          const item = prevCart[index];
-          item.quantity = item.quantity + 1;
-          item.total = Number.parseInt(item.product.price) * item.quantity;
+          cartApi.addItem(productId).then(cart => set(cart))
         }
-
-        return saveCart([...prevCart]);
-      });
+        return prevCart
+      })
     },
     increaseQuantity: product => {
+      const productId = `${product.id}`
       update(prevCart => {
-        const index = prevCart.findIndex(
-          item => item.product.id === product.id
-        );
-        if (index >= 0) {
-          const item = prevCart[index];
-          item.quantity = item.quantity + 1;
-          item.total = Number.parseInt(item.product.price) * item.quantity;
+        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        if (existing) {
+          // set quantity
+          cartApi.setQuantity(existing.id, existing.attributes.quantity + 1).then(cart => set(cart))
+        } else {
+          cartApi.addItem(productId).then(cart => set(cart))
         }
-        return saveCart([...prevCart]);
-      });
+        return prevCart
+      })
     },
     decreaseQuantity: product => {
+      const productId = `${product.id}`
       update(prevCart => {
-        const index = prevCart.findIndex(
-          item => item.product.id === product.id
-        );
-        if (index >= 0) {
-          const item = prevCart[index];
-          if (item.quantity > 1) {
-            item.quantity = item.quantity - 1;
-            item.total = Number.parseInt(item.product.price) * item.quantity;
-            return saveCart([...prevCart]);
+        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        if (existing) {
+          // set quantity
+          const quantity = existing.attributes.quantity - 1
+          if (quantity === 0) {
+            cartApi.removeLineItem(existing.id).then(cart => set(cart))
           } else {
-            return saveCart(
-              prevCart.filter(item => item.product.id !== product.id)
-            );
+            cartApi.setQuantity(existing.id, quantity).then(cart => set(cart))
           }
         }
-        return saveCart([...prevCart]);
-      });
+        return prevCart
+      })
     },
     removeProduct: product => {
+      const productId = `${product.id}`
       update(prevCart => {
-        return saveCart(
-          prevCart.filter(item => item.product.id !== product.id)
-        );
-      });
+        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        if (existing) {
+          cartApi.removeLineItem(existing.id).then(cart => set(cart))
+        }
+        return prevCart
+      })
     },
     reset: () => {
-      set(saveCart([]));
+      cartApi.empty().then(() => {
+        set({})
+      })
     },
     restore: cart => {
       set(cart);
@@ -179,5 +97,28 @@ export const cartStatus = createCartStatus();
 export const isCartRestored = derived(
   cartStatus,
   $cartStatus => $cartStatus.status === "restored"
+);
+
+export const displayCart = derived(
+  cart,
+  $cart => {
+    const lineItems = $cart.included
+
+    if (lineItems) {
+      const products = lineItems.map(item => {
+        return {
+          product: {
+            id: item.relationships.variant.data.id,
+            name: item.attributes.name,
+            price: item.attributes.price
+          },
+          quantity: item.attributes.quantity,
+          total: item.attributes.total
+        }
+      })
+      return products
+    }
+    return []
+  }
 );
 cartStatus.restore();

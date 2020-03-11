@@ -1,5 +1,5 @@
 <script>
-  import { cart } from "./stores/cart.js";
+  import { displayCart, cart } from "./stores/cart.js";
   import { email } from "./stores/guest.js";
   import {
     phone,
@@ -104,8 +104,8 @@
     </div>
     <div class="line-items w-full self-start">
       <ul>
-        {#if $cart.length > 0}
-          {#each $cart as { product, quantity, total } (product.id)}
+        {#if $displayCart.length > 0}
+          {#each $displayCart as { product, quantity, total } (product.id)}
             <li
               class="line-item flex py-2 w-full self-start border-b-2
               border-gray-200"
