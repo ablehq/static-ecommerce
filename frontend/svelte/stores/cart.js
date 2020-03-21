@@ -1,26 +1,34 @@
 import { writable, derived } from "svelte/store";
-import { cart as cartApi } from "../api"
+import { cart as cartApi } from "../api";
+import { CartVisibilityFSM } from "./FSM";
+import { interpret } from "xstate";
+let fsmService = interpret(CartVisibilityFSM)
+  .onTransition(state => {
+    console.log("================", state.value);
+  })
+  .start();
 
 function createCartStatus() {
   const { subscribe, set } = writable({
-    status: "unknown"
+    status: "unknown",
   });
   return {
     subscribe,
     restore: () => {
       set({
-        status: "in-progress"
+        status: "in-progress",
       });
       cartApi.fetch().then(val => {
         setTimeout(() => {
           set({
-            status: "restored"
+            status: "restored",
           });
-          console.log("Restored:", val)
+          console.log("Restored:", val);
           cart.restore(val);
+          fsmService.send("show");
         }, 1500);
-      })
-    }
+      });
+    },
   };
 }
 
@@ -29,65 +37,89 @@ function createCart() {
   return {
     subscribe,
     addProduct: product => {
-      const productId = `${product.id}`
+      const productId = `${product.id}`;
       update(prevCart => {
-        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        const existing =
+          prevCart.included &&
+          prevCart.included.length > 0 &&
+          prevCart.included.find(
+            lineItem => lineItem.relationships.variant.data.id === productId,
+          );
         if (existing) {
           // set quantity
-          cartApi.setQuantity(existing.id, existing.attributes.quantity + 1).then(cart => set(cart))
+          cartApi
+            .setQuantity(existing.id, existing.attributes.quantity + 1)
+            .then(cart => set(cart));
         } else {
-          cartApi.addItem(productId).then(cart => set(cart))
+          cartApi.addItem(productId).then(cart => set(cart));
         }
-        return prevCart
-      })
+        return prevCart;
+      });
     },
     increaseQuantity: product => {
-      const productId = `${product.id}`
+      const productId = `${product.id}`;
       update(prevCart => {
-        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        const existing =
+          prevCart.included &&
+          prevCart.included.length > 0 &&
+          prevCart.included.find(
+            lineItem => lineItem.relationships.variant.data.id === productId,
+          );
         if (existing) {
           // set quantity
-          cartApi.setQuantity(existing.id, existing.attributes.quantity + 1).then(cart => set(cart))
+          cartApi
+            .setQuantity(existing.id, existing.attributes.quantity + 1)
+            .then(cart => set(cart));
         } else {
-          cartApi.addItem(productId).then(cart => set(cart))
+          cartApi.addItem(productId).then(cart => set(cart));
         }
-        return prevCart
-      })
+        return prevCart;
+      });
     },
     decreaseQuantity: product => {
-      const productId = `${product.id}`
+      const productId = `${product.id}`;
       update(prevCart => {
-        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        const existing =
+          prevCart.included &&
+          prevCart.included.length > 0 &&
+          prevCart.included.find(
+            lineItem => lineItem.relationships.variant.data.id === productId,
+          );
         if (existing) {
           // set quantity
-          const quantity = existing.attributes.quantity - 1
+          const quantity = existing.attributes.quantity - 1;
           if (quantity === 0) {
-            cartApi.removeLineItem(existing.id).then(cart => set(cart))
+            cartApi.removeLineItem(existing.id).then(cart => set(cart));
           } else {
-            cartApi.setQuantity(existing.id, quantity).then(cart => set(cart))
+            cartApi.setQuantity(existing.id, quantity).then(cart => set(cart));
           }
         }
-        return prevCart
-      })
+        return prevCart;
+      });
     },
     removeProduct: product => {
-      const productId = `${product.id}`
+      const productId = `${product.id}`;
       update(prevCart => {
-        const existing = prevCart.included && prevCart.included.length > 0 && prevCart.included.find(lineItem => lineItem.relationships.variant.data.id === productId)
+        const existing =
+          prevCart.included &&
+          prevCart.included.length > 0 &&
+          prevCart.included.find(
+            lineItem => lineItem.relationships.variant.data.id === productId,
+          );
         if (existing) {
-          cartApi.removeLineItem(existing.id).then(cart => set(cart))
+          cartApi.removeLineItem(existing.id).then(cart => set(cart));
         }
-        return prevCart
-      })
+        return prevCart;
+      });
     },
     reset: () => {
       cartApi.empty().then(() => {
-        set({})
-      })
+        set({});
+      });
     },
     restore: cart => {
       set(cart);
-    }
+    },
   };
 }
 
@@ -96,29 +128,26 @@ export const cartStatus = createCartStatus();
 
 export const isCartRestored = derived(
   cartStatus,
-  $cartStatus => $cartStatus.status === "restored"
+  $cartStatus => $cartStatus.status === "restored",
 );
 
-export const displayCart = derived(
-  cart,
-  $cart => {
-    const lineItems = $cart.included
+export const displayCart = derived(cart, $cart => {
+  const lineItems = $cart.included;
 
-    if (lineItems) {
-      const products = lineItems.map(item => {
-        return {
-          product: {
-            id: item.relationships.variant.data.id,
-            name: item.attributes.name,
-            price: item.attributes.price
-          },
-          quantity: item.attributes.quantity,
-          total: item.attributes.total
-        }
-      })
-      return products
-    }
-    return []
+  if (lineItems) {
+    const products = lineItems.map(item => {
+      return {
+        product: {
+          id: item.relationships.variant.data.id,
+          name: item.attributes.name,
+          price: item.attributes.price,
+        },
+        quantity: item.attributes.quantity,
+        total: item.attributes.total,
+      };
+    });
+    return products;
   }
-);
+  return [];
+});
 cartStatus.restore();

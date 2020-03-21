@@ -1,7 +1,7 @@
 import svelte from "rollup-plugin-svelte";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-
+import replace from "@rollup/plugin-replace";
 import { terser } from "rollup-plugin-terser";
 const production = !process.env.ROLLUP_WATCH;
 export default {
@@ -10,12 +10,12 @@ export default {
     sourcemap: true,
     format: "iife",
     name: "app",
-    file: "source/_includes/js/bundle.js"
+    file: "source/_includes/js/bundle.js",
   },
   plugins: [
     svelte({
       // enable run-time checks when not in production
-      dev: !production
+      dev: !production,
       // we'll extract any component CSS out into
       // a separate file — better for performance
       // css: css => {
@@ -30,7 +30,7 @@ export default {
     resolve({
       browser: true,
       dedupe: importee =>
-        importee === "svelte" || importee.startsWith("svelte/")
+        importee === "svelte" || importee.startsWith("svelte/"),
     }),
     commonjs(),
     // In dev mode, call `npm run start` once
@@ -40,11 +40,14 @@ export default {
     // browser on changes when not in production
     // If we're building for production (npm run build
     // instead of npm run dev), minify
-    production && terser()
+    production && terser(),
+    replace({
+      "process.env.NODE_ENV": JSON.stringify("production"),
+    }),
   ],
   watch: {
-    clearScreen: false
-  }
+    clearScreen: false,
+  },
 };
 function serve() {
   let started = false;
@@ -54,9 +57,9 @@ function serve() {
         started = true;
         require("child_process").spawn("npm", ["run", "start", "--", "--dev"], {
           stdio: ["ignore", "inherit", "inherit"],
-          shell: true
+          shell: true,
         });
       }
-    }
+    },
   };
 }
